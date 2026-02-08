@@ -1,0 +1,19 @@
+{
+  "name": "PadelMatch",
+  "short_name": "PadelMatch",
+  "description": "Encuentra tu compañero de pádel perfecto",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "orientation": "portrait",
+  "categories": ["sports", "social"],
+  "icons": [
+    {
+      "src": "/assets/generated/padelmatch-logo.dim_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Add resilient loading/error states for Matches and Chat to prevent blank screens",
+  "requirements": [
+    {
+      "id": "REQ-2",
+      "summary": "Show explicit loading and error UI in Matches and Chat when matched user profile or chat data is loading/fails, while preserving back navigation and message sending.",
+      "acceptanceCriteria": [
+        "Opening a match from the Matches screen transitions to Chat and always renders a header area (with skeleton/loading state until profile data is available).",
+        "If profile fetch fails, Chat shows a visible error state (not a blank header) and the user can still go back to Matches.",
+        "If chat messages fetch fails, Chat shows a visible error state (not a blank message area) and the user can still attempt to send a message or go back.",
+        "Matches list renders either the matched user profile card or a skeleton; it does not get stuck indefinitely due to authorization errors after REQ-1 is implemented."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update chat/profile react-query hooks used by Matches/Chat to surface loading/error states reliably (e.g., ensure errors propagate instead of appearing as perpetual skeletons; disable infinite retries where appropriate). This supports graceful handling of authorization traps per the authorization component guidance. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/screens/ChatScreen.tsx",
+          "operation": "modify",
+          "description": "Ensure Chat never renders a blank header or blank message area: always render the header container with a skeleton while recipient profile is loading; show a clear, visible error state if useGetUserProfile(recipientId) fails while keeping the back button usable. Add an explicit loading state for chat messages, and a visible error state if useGetChat(recipientId) fails, while keeping the message input enabled so the user can still attempt to send or navigate back. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/screens/MatchesScreen.tsx",
+          "operation": "modify",
+          "description": "Prevent match cards from getting stuck as skeletons: in MatchCard, use useGetUserProfile(userId) loading/error state to render (a) skeleton while loading, (b) a clear inline error message with an optional retry action when the profile fetch fails, and (c) the normal profile card when available. Verify the component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}

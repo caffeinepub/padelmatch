@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "New project",
+  "architectural_notes": [],
+  "known_issues": [
+    "After a successful match, the chat area shows blank and the other user's profile in the chats section does not load, preventing messaging between matched users."
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-update-the-frontend-chat-and-matches-flows-to-avoid-a-blank-screen-when-matched-user-profile-chat-data-is-loading-or-fails-ensure-the-ui-shows-an-explicit-loading-state-and-a-clear-error-message-and-keeps-the-back-navigation-usable-when-usegetuserprofile-recipientid-or-usegetchat-recipientid-fails",
+      "title": "Update the frontend Chat and Matches flows to avoid a blank screen when matched user profile/chat data is loading or fails. Ensure the UI shows an explicit loading state and a clear error message (and keeps the back navigation usable) when `useGetUserProfile(recipientId)` or `useGetChat(recipientId)` fails.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Fix backend profile visibility so that a user can load the other person’s profile in the Matches list and Chat screen after a match (while still preventing arbitrary profile browsing). Specifically, update `getUserProfile(user : Principal)` to allow access when `caller == user` OR when `caller` and `user` are part of an existing match; otherwise keep the current authorization trap behavior.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Fix blank chat and missing matched user profile loading",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

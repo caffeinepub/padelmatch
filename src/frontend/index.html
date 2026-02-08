@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Encuentra tu compañero de pádel perfecto" />
+        <meta name="theme-color" content="#10b981" />
+        
+        <!-- PWA Configuration -->
+        <!-- Manifest reference - required for PWA installability -->
+        <link rel="manifest" href="/manifest.json" />
+        
+        <!-- Apple Touch Icon for iOS -->
+        <link rel="apple-touch-icon" href="/assets/generated/padelmatch-logo.dim_512x512.png" />
+        
+        <!-- iOS specific meta tags -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="PadelMatch" />
+        
+        <title>PadelMatch - Encuentra tu compañero de pádel</title>
+        
+        <!-- 
+          Production Deployment Notes:
+          - Service worker is registered in main.tsx for proper update handling
+          - Manifest.json includes icon reference to /assets/generated/padelmatch-logo.dim_512x512.png
+          - Before each deployment, increment CACHE_VERSION in service-worker.js
+          - Verify PWA installability after deployment using Lighthouse
+        -->
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
+</html>

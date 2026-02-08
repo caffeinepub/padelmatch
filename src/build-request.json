@@ -1,0 +1,57 @@
+{
+  "kind": "build_request",
+  "title": "Fix blank chat and missing matched user profile loading",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Fix backend profile visibility so that a user can load the other person’s profile in the Matches list and Chat screen after a match (while still preventing arbitrary profile browsing). Specifically, update `getUserProfile(user : Principal)` to allow access when `caller == user` OR when `caller` and `user` are part of an existing match; otherwise keep the current authorization trap behavior.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-user-1"
+        ],
+        "quotes": [
+          "But once you match... the chat appears blank... not even the other profile loads... you can't write to each other."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Given users A and B have a match, when A calls `getUserProfile(B)`, the backend returns `?Profile` (not an authorization error).",
+        "Given users A and C do NOT have a match and A is not an admin, when A calls `getUserProfile(C)`, the backend traps with an unauthorized error (same protection as today).",
+        "Existing chat authorization remains enforced: `getChat` and `sendMessage` still trap when no match exists."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Update the frontend Chat and Matches flows to avoid a blank screen when matched user profile/chat data is loading or fails. Ensure the UI shows an explicit loading state and a clear error message (and keeps the back navigation usable) when `useGetUserProfile(recipientId)` or `useGetChat(recipientId)` fails.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-1"
+        ],
+        "quotes": [
+          "the chat appears blank... not even the other profile loads... you can't write to each other."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Opening a match from the Matches screen transitions to Chat and always renders a header area (with skeleton/loading state until profile data is available).",
+        "If profile fetch fails, Chat shows a visible error state (not a blank header) and the user can still go back to Matches.",
+        "If chat messages fetch fails, Chat shows a visible error state (not a blank message area) and the user can still attempt to send a message or go back.",
+        "Matches list renders either the matched user profile card or a skeleton; it does not get stuck indefinitely due to authorization errors after REQ-1 is implemented."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor in `backend/main.mo`.",
+    "Do not edit files in `frontend/src/components/ui` or the immutable hook files listed in SYSTEM_CONTEXT."
+  ],
+  "nonGoals": [
+    "Implementing real-time chat via WebSockets or push notifications.",
+    "Adding new authentication providers beyond Internet Identity.",
+    "Changing the match creation logic or discovery filters behavior."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
