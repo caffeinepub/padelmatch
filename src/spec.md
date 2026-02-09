@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Restore the PlayPal logo to the previous gradient “PlayPal” wordmark with a single underline, and ensure it appears consistently across app icons and the Login screen without changing the app name.
+**Goal:** Replace the free-text “Zona” filter in Discover with a dropdown of Uruguay departments to make zone filtering selectable and consistent.
 
 **Planned changes:**
-- Replace the existing PlayPal logo assets in `frontend/public/assets/generated/` with updated versions that match the gradient wordmark + underline style.
-- Ensure the Login screen (`frontend/src/screens/LoginScreen.tsx`) continues to reference and display `/assets/generated/playpal-logo.dim_512x512.png`, now showing the restored logo style.
-- Keep existing PWA/Apple touch icon references (`frontend/public/manifest.json`, `frontend/index.html`) pointing to the same filenames while updating the underlying image files.
-- Keep the service worker precache list (`frontend/public/service-worker.js`) referencing the same PlayPal logo filenames, with the cached files now being the updated logo.
+- Update `frontend/src/components/DiscoverFilters.tsx` so the “Zona” field uses the existing `Select/SelectItem` components instead of a text input.
+- Populate the “Zona” dropdown with exactly these options: Artigas, Canelones, Cerro Largo, Colonia, Durazno, Flores, Florida, Lavalleja, Maldonado, Montevideo, Paysandú, Río Negro, Rivera, Rocha, Salto, San José, Soriano, Tacuarembó, Treinta y Tres.
+- Add a clear “no zone filter” option (e.g., All/Any) that sets `filters.zone` to an empty string.
+- Ensure selecting a department calls `onFiltersChange` to update `filters.zone` with the selected department string, while keeping the existing filters object shape passed from `DiscoverScreen` to `useDiscoverCandidates`.
 
-**User-visible outcome:** Users will see the restored PlayPal gradient wordmark with an underline on the Login screen and as the app icon (PWA and Apple touch icon), with the app name still “PlayPal”.
+**User-visible outcome:** In Discover filters, users can choose a Uruguay department from a “Zona” dropdown (or select All/Any) instead of typing the zone manually.

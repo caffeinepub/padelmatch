@@ -1,52 +1,40 @@
 {
   "kind": "build_request",
-  "title": "Restore PlayPal logo to gradient wordmark with underline",
+  "title": "Replace zone text input with selectable Uruguay departments in Discover filters",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Replace the current PlayPal logo assets with the previous-format PlayPal wordmark: the text “PlayPal” filled with a blue-to-yellow gradient and a single horizontal line underneath, keeping the app name as “PlayPal”. The updated logo must be used everywhere the app currently references the PlayPal logo assets under /assets/generated/ (PWA icons, Apple touch icon, and the Login screen logo image).",
+      "text": "Update the discovery filters UI so the \"Zona\" filter is a dropdown (select) containing all departments of Uruguay as selectable options, instead of a free-text input.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-3"
+          "msg-4"
         ],
         "quotes": [
-          "Déjale nombre PlayPal pero el logo devolve el formato de antes, PlayPal color azul y amarillo en degradado con una línea debajo"
+          "En los filtros, añadi en zonas, cada departamento de Uruguay como seleccionable en lugar de tener que escribirlo"
         ]
       },
       "acceptanceCriteria": [
-        "The following static assets exist at frontend/public/assets/generated and visually match the requested style (gradient PlayPal text with an underline): playpal-logo.dim_512x512.png, playpal-logo.dim_192x192.png, playpal-logo.dim_180x180.png.",
-        "The Login screen (frontend/src/screens/LoginScreen.tsx) renders the updated logo image at /assets/generated/playpal-logo.dim_512x512.png and the logo is visibly the gradient wordmark with an underline.",
-        "PWA metadata continues to reference the same logo asset paths (frontend/index.html apple-touch-icon and frontend/public/manifest.json icons), and the referenced files render the updated logo.",
-        "The production service worker precache list (frontend/public/service-worker.js) continues to include the same PlayPal logo filenames, and those cached files are the updated logo."
+        "In frontend/src/components/DiscoverFilters.tsx, the \"Zona\" field is no longer a text <Input>; it uses the existing Select/SelectItem components.",
+        "The zone dropdown includes exactly these Uruguay departments as options: Artigas, Canelones, Cerro Largo, Colonia, Durazno, Flores, Florida, Lavalleja, Maldonado, Montevideo, Paysandú, Río Negro, Rivera, Rocha, Salto, San José, Soriano, Tacuarembó, Treinta y Tres.",
+        "Selecting a department updates filters.zone via onFiltersChange with the selected department name as a string.",
+        "There is a clear way to represent 'no zone filter' (e.g., an \"All\" / \"Any\" option) that sets filters.zone to an empty string so existing filtering logic continues to work.",
+        "DiscoverScreen continues to pass the same filters object shape to useDiscoverCandidates without any backend changes required."
       ]
     }
   ],
   "constraints": [
-    "Do not change the application name; it must remain “PlayPal”.",
-    "Do not edit files under frontend/src/components/ui or other immutable paths listed in SYSTEM_CONTEXT."
+    "Frontend immutable paths must not be edited: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui (compose only).",
+    "Do not introduce any new backend canisters/services; keep the existing single-actor Motoko backend unchanged unless strictly required by the filter behavior."
   ],
   "nonGoals": [
-    "Fixing or investigating the prior deployment failure (not requested).",
-    "Changing any other UI copy, language, or app theme beyond what is necessary to restore the requested logo format."
+    "Translating the app UI language.",
+    "Adding city/neighborhood-level zones beyond Uruguay departments.",
+    "Changing discovery matching/filtering semantics on the backend."
   ],
   "imageRequirements": {
-    "required": [
-      "“PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_512x512.png, 512x512)",
-      "“PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_192x192.png, 192x192)",
-      "“PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_180x180.png, 180x180)"
-    ],
+    "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

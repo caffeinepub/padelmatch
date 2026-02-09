@@ -1,52 +1,23 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Restore PlayPal gradient wordmark logo assets across PWA + Login",
+  "title": "Replace Discover \"Zona\" free-text filter with Uruguay departments dropdown",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Replace PlayPal logo image assets with the previous gradient wordmark + underline format and ensure all existing references (Login, PWA icons, Apple touch icon, service worker precache) continue to point to the same filenames.",
+      "summary": "Replace the Discover filters \"Zona\" text input with a Select dropdown listing all Uruguay departments plus an 'Any' option, updating filters.zone accordingly without changing the filters shape.",
       "acceptanceCriteria": [
-        "The following static assets exist at frontend/public/assets/generated and visually match the requested style (gradient PlayPal text with an underline): playpal-logo.dim_512x512.png, playpal-logo.dim_192x192.png, playpal-logo.dim_180x180.png.",
-        "The Login screen (frontend/src/screens/LoginScreen.tsx) renders the updated logo image at /assets/generated/playpal-logo.dim_512x512.png and the logo is visibly the gradient wordmark with an underline.",
-        "PWA metadata continues to reference the same logo asset paths (frontend/index.html apple-touch-icon and frontend/public/manifest.json icons), and the referenced files render the updated logo.",
-        "The production service worker precache list (frontend/public/service-worker.js) continues to include the same PlayPal logo filenames, and those cached files are the updated logo."
+        "In frontend/src/components/DiscoverFilters.tsx, the \"Zona\" field is no longer a text <Input>; it uses the existing Select/SelectItem components.",
+        "The zone dropdown includes exactly these Uruguay departments as options: Artigas, Canelones, Cerro Largo, Colonia, Durazno, Flores, Florida, Lavalleja, Maldonado, Montevideo, Paysandú, Río Negro, Rivera, Rocha, Salto, San José, Soriano, Tacuarembó, Treinta y Tres.",
+        "Selecting a department updates filters.zone via onFiltersChange with the selected department name as a string.",
+        "There is a clear way to represent 'no zone filter' (e.g., an \"All\" / \"Any\" option) that sets filters.zone to an empty string so existing filtering logic continues to work.",
+        "DiscoverScreen continues to pass the same filters object shape to useDiscoverCandidates without any backend changes required."
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/generated/playpal-logo.dim_512x512.png",
+          "path": "frontend/src/components/DiscoverFilters.tsx",
           "operation": "modify",
-          "description": "Replace the existing 512x512 PlayPal logo image with the requested gradient “PlayPal” wordmark plus a single thin underline on transparent background, keeping the exact filename and dimensions (512x512)."
-        },
-        {
-          "path": "frontend/public/assets/generated/playpal-logo.dim_192x192.png",
-          "operation": "modify",
-          "description": "Replace the existing 192x192 PlayPal logo image with the requested gradient “PlayPal” wordmark plus a single thin underline on transparent background, keeping the exact filename and dimensions (192x192)."
-        },
-        {
-          "path": "frontend/public/assets/generated/playpal-logo.dim_180x180.png",
-          "operation": "modify",
-          "description": "Replace the existing 180x180 PlayPal logo image with the requested gradient “PlayPal” wordmark plus a single thin underline on transparent background, keeping the exact filename and dimensions (180x180)."
-        },
-        {
-          "path": "frontend/src/screens/LoginScreen.tsx",
-          "operation": "modify",
-          "description": "Ensure the Login screen continues to render the logo from /assets/generated/playpal-logo.dim_512x512.png and that no app-name text is changed (must remain “PlayPal”)."
-        },
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Confirm the Apple touch icon link continues referencing /assets/generated/playpal-logo.dim_180x180.png (no app-name changes; must remain “PlayPal”)."
-        },
-        {
-          "path": "frontend/public/manifest.json",
-          "operation": "modify",
-          "description": "Confirm the PWA manifest continues referencing /assets/generated/playpal-logo.dim_192x192.png and /assets/generated/playpal-logo.dim_512x512.png for icons (no app-name changes; must remain “PlayPal”)."
-        },
-        {
-          "path": "frontend/public/service-worker.js",
-          "operation": "modify",
-          "description": "Confirm the precache list continues to include /assets/generated/playpal-logo.dim_512x512.png, /assets/generated/playpal-logo.dim_192x192.png, and /assets/generated/playpal-logo.dim_180x180.png so updated logo files are cached under the same filenames."
+          "description": "Replace the \"Zona\" <Input> with the existing shadcn Select/SelectItem UI (use SelectTrigger/SelectValue/SelectContent) and provide a fixed options list containing an explicit 'Any/All' option mapped to empty string plus exactly the 19 Uruguay departments. Ensure onValueChange calls onFiltersChange({ ...filters, zone: selectedValue }) and keeps the filters object shape unchanged. Verify the component's usage instructions before implementing."
         }
       ]
     }

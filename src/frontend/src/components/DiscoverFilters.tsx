@@ -1,7 +1,6 @@
 import { Level } from '../backend';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 
 interface DiscoverFiltersProps {
   filters: {
@@ -11,6 +10,28 @@ interface DiscoverFiltersProps {
   };
   onFiltersChange: (filters: { levelMin: Level; levelMax: Level; zone: string }) => void;
 }
+
+const URUGUAY_DEPARTMENTS = [
+  'Artigas',
+  'Canelones',
+  'Cerro Largo',
+  'Colonia',
+  'Durazno',
+  'Flores',
+  'Florida',
+  'Lavalleja',
+  'Maldonado',
+  'Montevideo',
+  'Paysandú',
+  'Río Negro',
+  'Rivera',
+  'Rocha',
+  'Salto',
+  'San José',
+  'Soriano',
+  'Tacuarembó',
+  'Treinta y Tres',
+];
 
 export default function DiscoverFilters({ filters, onFiltersChange }: DiscoverFiltersProps) {
   return (
@@ -55,11 +76,22 @@ export default function DiscoverFilters({ filters, onFiltersChange }: DiscoverFi
 
       <div className="space-y-2">
         <Label>Zona</Label>
-        <Input
-          value={filters.zone}
-          onChange={(e) => onFiltersChange({ ...filters, zone: e.target.value })}
-          placeholder="Ej: Madrid Centro"
-        />
+        <Select
+          value={filters.zone || ''}
+          onValueChange={(v) => onFiltersChange({ ...filters, zone: v })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccionar departamento" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todos</SelectItem>
+            {URUGUAY_DEPARTMENTS.map((dept) => (
+              <SelectItem key={dept} value={dept}>
+                {dept}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

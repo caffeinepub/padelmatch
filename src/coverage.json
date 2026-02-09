@@ -1,40 +1,34 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T16:15:48.100Z",
+  "generatedAt": "2026-02-09T20:24:37.134Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 1,
-    "implemented": 0,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Replace the current PlayPal logo assets with the previous-format PlayPal wordmark: the text “PlayPal” filled with a blue-to-yellow gradient and a single horizontal line underneath, keeping the app name as “PlayPal”. The updated logo must be used everywhere the app currently references the PlayPal logo assets under /assets/generated/ (PWA icons, Apple touch icon, and the Login screen logo image).",
-        "status": "missing",
+        "summary": "Update the discovery filters UI so the \"Zona\" filter is a dropdown (select) containing all departments of Uruguay as selectable options, instead of a free-text input.",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/public/assets/generated/playpal-logo.dim_512x512.png",
-          "frontend/public/assets/generated/playpal-logo.dim_192x192.png",
-          "frontend/public/assets/generated/playpal-logo.dim_180x180.png",
-          "frontend/src/screens/LoginScreen.tsx",
-          "frontend/index.html",
-          "frontend/public/manifest.json",
-          "frontend/public/service-worker.js"
+          "frontend/src/components/DiscoverFilters.tsx"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/components/DiscoverFilters.tsx"
+        ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/playpal-logo.dim_180x180.png, 180x180",
-    "frontend/public/assets/generated/playpal-logo.dim_192x192.png, 192x192",
-    "frontend/public/assets/generated/playpal-logo.dim_512x512.png, 512x512",
+    "frontend/src/components/DiscoverFilters.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

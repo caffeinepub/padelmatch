@@ -22,9 +22,14 @@ export default function LoginScreen() {
           <h1 className="text-4xl font-bold text-emerald-700 dark:text-emerald-400">
             PlayPal
           </h1>
-          <p className="text-lg text-muted-foreground">
-            Encuentra tu compañero de pádel perfecto
-          </p>
+          <div className="space-y-1">
+            <p className="text-lg text-muted-foreground">
+              🔥 Swipeá, conectá y jugá pádel al instante
+            </p>
+            <p className="text-lg text-muted-foreground">
+              ⚡ Tu mejor compañero lo encontrás acá
+            </p>
+          </div>
         </div>
 
         {/* Features */}
@@ -43,6 +48,17 @@ export default function LoginScreen() {
           className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold py-6 text-lg rounded-2xl shadow-lg"
         >
           {isLoggingIn ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+        </Button>
+
+        {/* Create Account Button */}
+        <Button
+          onClick={() => {}}
+          disabled={isLoggingIn}
+          size="lg"
+          variant="outline"
+          className="w-full font-semibold py-6 text-lg rounded-2xl border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-400 dark:hover:bg-emerald-950"
+        >
+          Crear cuenta
         </Button>
 
         {/* Footer */}

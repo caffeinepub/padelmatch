@@ -1,32 +1,29 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Project named PlayPal; needs a logo in the previous format: the word \"PlayPal\" with a blue-to-yellow gradient and a line underneath.",
+  "summary": "New project",
   "architectural_notes": [],
-  "known_issues": [
-    "Deployment failed / unable to complete deployment (deployment error)."
-  ],
-  "isFixRequest": true,
-  "imageRequirements": "## Required Images\n- “PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_512x512.png, 512x512)\n- “PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_192x192.png, 192x192)\n- “PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_180x180.png, 180x180)",
-  "existing_features": [],
-  "new_feature_requests": [
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
     {
-      "id": "AR-1",
-      "summary": "Restore/create PlayPal logo in previous format (blue-to-yellow gradient text with an underline).",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Replace the current PlayPal logo assets with the previous-format PlayPal wordmark: the text “PlayPal” filled with a blue-to-yellow gradient and a single horizontal line underneath, keeping the app name as “PlayPal”. The updated logo must be used everywhere the app currently references the PlayPal logo assets under /assets/generated/ (PWA icons, Apple touch icon, and the Login screen logo image).",
+      "id": "feature-update-the-discovery-filters-ui-so-the-zona-filter-is-a-dropdown-select-containing-all-departments-of-uruguay-as-selectable-options-instead-of-a-free-text-input",
+      "title": "Update the discovery filters UI so the \"Zona\" filter is a dropdown (select) containing all departments of Uruguay as selectable options, instead of a free-text input.",
       "reqIds": [
         "REQ-1"
       ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "En filtros > zonas: permitir seleccionar cada departamento de Uruguay (lista desplegable) en vez de escribirlo manualmente",
+      "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "PlayPal",
+  "projectName": "Replace zone text input with selectable Uruguay departments in Discover filters",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }
