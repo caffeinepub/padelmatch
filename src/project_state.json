@@ -3,27 +3,38 @@
   "projectStateVersion": 3,
   "summary": "New project",
   "architectural_notes": [],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Tapping the FILTROS (Filters) button causes the screen to go blank (white screen) instead of opening the filter panel."
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-update-the-discovery-filters-ui-so-the-zona-filter-is-a-dropdown-select-containing-all-departments-of-uruguay-as-selectable-options-instead-of-a-free-text-input",
-      "title": "Update the discovery filters UI so the \"Zona\" filter is a dropdown (select) containing all departments of Uruguay as selectable options, instead of a free-text input.",
+      "id": "feature-fix-the-runtime-crash-that-causes-a-blank-white-screen-when-the-user-taps-the-filtros-button-in-the-discover-screen-so-the-filters-sheet-opens-reliably-and-renders-the-filter-controls",
+      "title": "Fix the runtime crash that causes a blank/white screen when the user taps the \"FILTROS\" button in the Discover screen, so the filters sheet opens reliably and renders the filter controls.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
-    }
-  ],
-  "new_feature_requests": [
+    },
     {
-      "id": "AR-1",
-      "summary": "En filtros > zonas: permitir seleccionar cada departamento de Uruguay (lista desplegable) en vez de escribirlo manualmente",
-      "reqIds": [],
-      "status": "pending"
+      "id": "feature-update-the-discover-filters-ui-implementation-to-ensure-shadcn-select-components-use-stable-string-values-and-not-candid-idl-enum-variant-objects-for-their-value-selectitem-value-props-while-still-producing-a-valid-filters-object-for-usediscovercandidates-filters",
+      "title": "Update the Discover filters UI implementation to ensure Shadcn Select components use stable string values (and not candid/IDL enum/variant objects) for their `value` / `SelectItem value` props, while still producing a valid `Filters` object for `useDiscoverCandidates(filters)`.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-minimal-user-safe-failure-mode-for-the-discover-filters-panel-rendering-if-the-filters-ui-throws-during-render-show-a-small-inline-error-state-inside-the-sheet-instead-of-blanking-the-entire-app-view",
+      "title": "Add a minimal, user-safe failure mode for the Discover filters panel rendering: if the filters UI throws during render, show a small inline error state inside the sheet instead of blanking the entire app view.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
     }
   ],
-  "projectName": "Replace zone text input with selectable Uruguay departments in Discover filters",
+  "new_feature_requests": [],
+  "projectName": "Fix white screen crash when tapping the Discover 'FILTROS' button",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

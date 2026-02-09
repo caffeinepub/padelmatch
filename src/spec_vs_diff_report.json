@@ -1,29 +1,25 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T20:24:37.132Z",
-  "summary": "REQ-1 appears implemented in DiscoverFilters: the Zona input is now a Select dropdown containing the specified 19 Uruguay departments plus a \"Todos\" option that sets zone to an empty string, and selection updates filters.zone via onFiltersChange. No backend changes are shown.",
+  "generatedAt": "2026-02-09T22:35:44.371Z",
+  "summary": "The diff implements the requested frontend-only fix by (1) switching Discover filter Select values to stable string keys with mapping back to backend Level types, (2) wiring the Discover screen to use these keys while still producing a typed filters object for useDiscoverCandidates(filters), and (3) adding an inline error boundary inside the Sheet content with a close action to prevent a full-screen white crash if rendering fails.",
   "missing_requirements": [],
   "hallucinated_features": [
     {
-      "description": "Updated project metadata/state entries marking new feature requests (AR-1/AR-2) as pending.",
-      "reason": "BuildRequest only asked for a UI change in DiscoverFilters; updating project_state.json feature request tracking was not requested.",
+      "description": "Adds a \"Reintentar\" (Retry) button in the inline sheet error state, which was not explicitly requested (only an inline error message and a way to close were required).",
+      "reason": "REQ-3 acceptance criteria mention an inline error message and a way to close the sheet; retry behavior is extra beyond the stated minimum recovery requirement.",
       "evidence": [
-        "project_state.json"
-      ]
-    },
-    {
-      "description": "Updated/added descriptive summaries of many frontend files including additional UI/behavior details unrelated to the requested Zona dropdown change.",
-      "reason": "BuildRequest did not request documentation/summary updates; this appears to be ancillary metadata change beyond implementing REQ-1.",
-      "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend/src/components/InlineSheetErrorBoundary.tsx"
       ]
     }
   ],
-  "confidence": 0.74,
+  "confidence": 0.84,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/src/components/DiscoverFilters.tsx",
+    "frontend/src/components/InlineSheetErrorBoundary.tsx",
+    "frontend/src/screens/DiscoverScreen.tsx",
+    "frontend/src/utils/discoverFilterMappings.ts",
     "project_state.json"
   ]
 }

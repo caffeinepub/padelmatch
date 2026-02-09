@@ -1,23 +1,77 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Replace Discover \"Zona\" free-text filter with Uruguay departments dropdown",
+  "title": "Fix Discover filters sheet white-screen crash (stable Select values + safe fallback)",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Replace the Discover filters \"Zona\" text input with a Select dropdown listing all Uruguay departments plus an 'Any' option, updating filters.zone accordingly without changing the filters shape.",
+      "summary": "Prevent the Discover screen from crashing/blanking when opening the FILTROS sheet and ensure the filter controls render reliably.",
       "acceptanceCriteria": [
-        "In frontend/src/components/DiscoverFilters.tsx, the \"Zona\" field is no longer a text <Input>; it uses the existing Select/SelectItem components.",
-        "The zone dropdown includes exactly these Uruguay departments as options: Artigas, Canelones, Cerro Largo, Colonia, Durazno, Flores, Florida, Lavalleja, Maldonado, Montevideo, Paysandú, Río Negro, Rivera, Rocha, Salto, San José, Soriano, Tacuarembó, Treinta y Tres.",
-        "Selecting a department updates filters.zone via onFiltersChange with the selected department name as a string.",
-        "There is a clear way to represent 'no zone filter' (e.g., an \"All\" / \"Any\" option) that sets filters.zone to an empty string so existing filtering logic continues to work.",
-        "DiscoverScreen continues to pass the same filters object shape to useDiscoverCandidates without any backend changes required."
+        "From the Discover screen, tapping the \"FILTROS\" button opens the sheet and the app does not render a blank/white screen.",
+        "No uncaught exceptions are thrown when opening the sheet (check browser console).",
+        "The sheet renders the three filter controls (minimum level, maximum level, zone) without errors."
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/DiscoverFilters.tsx",
           "operation": "modify",
-          "description": "Replace the \"Zona\" <Input> with the existing shadcn Select/SelectItem UI (use SelectTrigger/SelectValue/SelectContent) and provide a fixed options list containing an explicit 'Any/All' option mapped to empty string plus exactly the 19 Uruguay departments. Ensure onValueChange calls onFiltersChange({ ...filters, zone: selectedValue }) and keeps the filters object shape unchanged. Verify the component's usage instructions before implementing."
+          "description": "Update the filters panel to provide Shadcn Select components stable string `value` / `SelectItem value` props (instead of passing potentially non-string Level runtime shapes). Use the existing shadcn/ui Select components via composition only (do not edit files under frontend/src/components/ui). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/screens/DiscoverScreen.tsx",
+          "operation": "modify",
+          "description": "Refactor Discover screen filter state so the Sheet opens reliably and the filters panel receives safe props. Ensure the derived Filters object passed into `useDiscoverCandidates(filters)` remains valid while the UI uses stable string keys for Select values. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/discoverFilterMappings.ts",
+          "operation": "create",
+          "description": "Add small mapping/helpers to convert between unknown/IDL-shaped Level values and stable string keys (e.g., levelToKey/keyToLevel), so Select values are always strings while producing a correct `Filters` object for discovery queries."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Ensure Discover filter Selects use stable string values while still producing a valid `Filters` object for `useDiscoverCandidates(filters)` and reflecting selections correctly.",
+      "acceptanceCriteria": [
+        "Opening the filters sheet does not crash even if `Level` is represented as a non-string candid/IDL type at runtime.",
+        "Selecting \"Minimum level\" and \"Maximum level\" updates the Discover screen results (query refresh) without errors.",
+        "All Selects show the currently selected value correctly after changes and after closing/reopening the sheet."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/discoverFilterMappings.ts",
+          "operation": "modify",
+          "description": "Implement robust parsing/coercion for Level values so it can accept runtime shapes (string, enum-like, or object) and consistently return a stable string key; also provide conversion back to the typed `Level` for the backend `Filters` payload."
+        },
+        {
+          "path": "frontend/src/components/DiscoverFilters.tsx",
+          "operation": "modify",
+          "description": "Change props to accept stable string keys for `levelMin`/`levelMax` (and keep `zone` as string), wiring `onValueChange` to emit keys. Keep the three controls (minimum level, maximum level, zone) and ensure Select shows the current selection after open/close cycles. Use existing shadcn/ui Select components (compose only). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/screens/DiscoverScreen.tsx",
+          "operation": "modify",
+          "description": "Maintain UI filter state as string keys and derive a typed `Filters` object (using mapping helpers) for `useDiscoverCandidates(filters)`. Ensure changes to min/max levels trigger a query refresh and do not throw, even if existing filter values originated from non-string runtime representations."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add a minimal, user-safe failure mode so a render error in the filters panel shows an inline error in the sheet instead of blanking the app.",
+      "acceptanceCriteria": [
+        "If an error occurs while rendering the filters panel, the rest of the Discover screen remains visible and interactive.",
+        "The sheet content shows an inline error message and a way to close the sheet (so the user can recover without refresh)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/InlineSheetErrorBoundary.tsx",
+          "operation": "create",
+          "description": "Create a small React error boundary component intended for Sheet content that catches render errors and renders an inline, user-safe error state (message + retry/close actions via callbacks) without taking down the rest of the app."
+        },
+        {
+          "path": "frontend/src/screens/DiscoverScreen.tsx",
+          "operation": "modify",
+          "description": "Wrap the `DiscoverFilters` render inside the new inline Sheet error boundary. Control Sheet open state (e.g., via local state and `onOpenChange`) so the error fallback can close the sheet and let the user recover without a full refresh. Use existing shadcn/ui Sheet/Button components via composition only. Verify the component's usage instructions before implementing."
         }
       ]
     }

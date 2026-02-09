@@ -1,24 +1,56 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T20:24:37.134Z",
+  "generatedAt": "2026-02-09T22:35:44.374Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the discovery filters UI so the \"Zona\" filter is a dropdown (select) containing all departments of Uruguay as selectable options, instead of a free-text input.",
+        "summary": "Fix the runtime crash that causes a blank/white screen when the user taps the \"FILTROS\" button in the Discover screen, so the filters sheet opens reliably and renders the filter controls.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/DiscoverFilters.tsx"
+          "frontend/src/components/DiscoverFilters.tsx",
+          "frontend/src/screens/DiscoverScreen.tsx",
+          "frontend/src/utils/discoverFilterMappings.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/DiscoverFilters.tsx"
+          "frontend/src/components/DiscoverFilters.tsx",
+          "frontend/src/screens/DiscoverScreen.tsx",
+          "frontend/src/utils/discoverFilterMappings.ts"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Update the Discover filters UI implementation to ensure Shadcn Select components use stable string values (and not candid/IDL enum/variant objects) for their `value` / `SelectItem value` props, while still producing a valid `Filters` object for `useDiscoverCandidates(filters)`.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/utils/discoverFilterMappings.ts",
+          "frontend/src/components/DiscoverFilters.tsx",
+          "frontend/src/screens/DiscoverScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/utils/discoverFilterMappings.ts",
+          "frontend/src/components/DiscoverFilters.tsx",
+          "frontend/src/screens/DiscoverScreen.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Add a minimal, user-safe failure mode for the Discover filters panel rendering: if the filters UI throws during render, show a small inline error state inside the sheet instead of blanking the entire app view.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/InlineSheetErrorBoundary.tsx",
+          "frontend/src/screens/DiscoverScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/InlineSheetErrorBoundary.tsx",
+          "frontend/src/screens/DiscoverScreen.tsx"
         ]
       }
     ]
@@ -29,6 +61,9 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/components/DiscoverFilters.tsx",
+    "frontend/src/components/InlineSheetErrorBoundary.tsx",
+    "frontend/src/screens/DiscoverScreen.tsx",
+    "frontend/src/utils/discoverFilterMappings.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,14 +1,14 @@
-import { Level } from '../backend';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { LevelKey } from '../utils/discoverFilterMappings';
 
 interface DiscoverFiltersProps {
-  filters: {
-    levelMin: Level;
-    levelMax: Level;
-    zone: string;
-  };
-  onFiltersChange: (filters: { levelMin: Level; levelMax: Level; zone: string }) => void;
+  levelMin: LevelKey;
+  levelMax: LevelKey;
+  zone: string;
+  onLevelMinChange: (key: LevelKey) => void;
+  onLevelMaxChange: (key: LevelKey) => void;
+  onZoneChange: (zone: string) => void;
 }
 
 const URUGUAY_DEPARTMENTS = [
@@ -33,53 +33,51 @@ const URUGUAY_DEPARTMENTS = [
   'Treinta y Tres',
 ];
 
-export default function DiscoverFilters({ filters, onFiltersChange }: DiscoverFiltersProps) {
+export default function DiscoverFilters({
+  levelMin,
+  levelMax,
+  zone,
+  onLevelMinChange,
+  onLevelMaxChange,
+  onZoneChange,
+}: DiscoverFiltersProps) {
   return (
     <div className="space-y-6 py-6">
       <div className="space-y-2">
         <Label>Nivel Mínimo</Label>
-        <Select
-          value={filters.levelMin}
-          onValueChange={(v) => onFiltersChange({ ...filters, levelMin: v as Level })}
-        >
+        <Select value={levelMin} onValueChange={(v) => onLevelMinChange(v as LevelKey)}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={Level.one}>Nivel 1</SelectItem>
-            <SelectItem value={Level.two}>Nivel 2</SelectItem>
-            <SelectItem value={Level.three}>Nivel 3</SelectItem>
-            <SelectItem value={Level.four}>Nivel 4</SelectItem>
-            <SelectItem value={Level.five}>Nivel 5</SelectItem>
+            <SelectItem value="1">Nivel 1</SelectItem>
+            <SelectItem value="2">Nivel 2</SelectItem>
+            <SelectItem value="3">Nivel 3</SelectItem>
+            <SelectItem value="4">Nivel 4</SelectItem>
+            <SelectItem value="5">Nivel 5</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="space-y-2">
         <Label>Nivel Máximo</Label>
-        <Select
-          value={filters.levelMax}
-          onValueChange={(v) => onFiltersChange({ ...filters, levelMax: v as Level })}
-        >
+        <Select value={levelMax} onValueChange={(v) => onLevelMaxChange(v as LevelKey)}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={Level.one}>Nivel 1</SelectItem>
-            <SelectItem value={Level.two}>Nivel 2</SelectItem>
-            <SelectItem value={Level.three}>Nivel 3</SelectItem>
-            <SelectItem value={Level.four}>Nivel 4</SelectItem>
-            <SelectItem value={Level.five}>Nivel 5</SelectItem>
+            <SelectItem value="1">Nivel 1</SelectItem>
+            <SelectItem value="2">Nivel 2</SelectItem>
+            <SelectItem value="3">Nivel 3</SelectItem>
+            <SelectItem value="4">Nivel 4</SelectItem>
+            <SelectItem value="5">Nivel 5</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="space-y-2">
         <Label>Zona</Label>
-        <Select
-          value={filters.zone || ''}
-          onValueChange={(v) => onFiltersChange({ ...filters, zone: v })}
-        >
+        <Select value={zone} onValueChange={onZoneChange}>
           <SelectTrigger>
             <SelectValue placeholder="Seleccionar departamento" />
           </SelectTrigger>

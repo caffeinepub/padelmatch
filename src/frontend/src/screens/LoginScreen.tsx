@@ -52,7 +52,7 @@ export default function LoginScreen() {
 
         {/* Create Account Button */}
         <Button
-          onClick={() => {}}
+          onClick={login}
           disabled={isLoggingIn}
           size="lg"
           variant="outline"
@@ -63,9 +63,9 @@ export default function LoginScreen() {
 
         {/* Footer */}
         <p className="text-xs text-muted-foreground pt-8">
-          © 2026. Built with <Heart className="inline h-3 w-3 text-red-500" /> using{' '}
+          © {new Date().getFullYear()}. Built with <Heart className="inline h-3 w-3 text-red-500" /> using{' '}
           <a
-            href="https://caffeine.ai"
+            href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-emerald-600 hover:underline dark:text-emerald-400"

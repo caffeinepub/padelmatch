@@ -2,10 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-discovery-filters-ui-so-the-zona-filter-is-a-dropdown-select-containing-all-departments-of-uruguay-as-selectable-options-instead-of-a-free-text-input",
-      "featureTitle": "Update the discovery filters UI so the \"Zona\" filter is a dropdown (select) containing all departments of Uruguay as selectable options, instead of a free-text input.",
+      "featureId": "feature-fix-the-runtime-crash-that-causes-a-blank-white-screen-when-the-user-taps-the-filtros-button-in-the-discover-screen-so-the-filters-sheet-opens-reliably-and-renders-the-filter-controls",
+      "featureTitle": "Fix the runtime crash that causes a blank/white screen when the user taps the \"FILTROS\" button in the Discover screen, so the filters sheet opens reliably and renders the filter controls.",
       "files": [
-        "frontend/src/components/DiscoverFilters.tsx"
+        "frontend/src/components/DiscoverFilters.tsx",
+        "frontend/src/screens/DiscoverScreen.tsx",
+        "frontend/src/utils/discoverFilterMappings.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,6 +20,49 @@
       ],
       "testIds": [
         "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-discover-filters-ui-implementation-to-ensure-shadcn-select-components-use-stable-string-values-and-not-candid-idl-enum-variant-objects-for-their-value-selectitem-value-props-while-still-producing-a-valid-filters-object-for-usediscovercandidates-filters",
+      "featureTitle": "Update the Discover filters UI implementation to ensure Shadcn Select components use stable string values (and not candid/IDL enum/variant objects) for their `value` / `SelectItem value` props, while still producing a valid `Filters` object for `useDiscoverCandidates(filters)`.",
+      "files": [
+        "frontend/src/components/DiscoverFilters.tsx",
+        "frontend/src/screens/DiscoverScreen.tsx",
+        "frontend/src/utils/discoverFilterMappings.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-minimal-user-safe-failure-mode-for-the-discover-filters-panel-rendering-if-the-filters-ui-throws-during-render-show-a-small-inline-error-state-inside-the-sheet-instead-of-blanking-the-entire-app-view",
+      "featureTitle": "Add a minimal, user-safe failure mode for the Discover filters panel rendering: if the filters UI throws during render, show a small inline error state inside the sheet instead of blanking the entire app view.",
+      "files": [
+        "frontend/src/components/InlineSheetErrorBoundary.tsx",
+        "frontend/src/screens/DiscoverScreen.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
       ],
       "confidence": "high"
     }

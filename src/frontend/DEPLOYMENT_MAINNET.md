@@ -1,6 +1,6 @@
-# PadelMatch - Guía de Despliegue en Mainnet
+# PlayPal - Guía de Despliegue en Mainnet
 
-Esta guía proporciona instrucciones paso a paso para desplegar PadelMatch en la red principal de Internet Computer (IC mainnet).
+Esta guía proporciona instrucciones paso a paso para desplegar PlayPal en la red principal de Internet Computer (IC mainnet).
 
 ## Requisitos Previos
 
@@ -12,3 +12,4 @@ Antes de comenzar, asegúrate de tener instalado:
 - **Cycles** suficientes en tu billetera para crear y mantener canisters en mainnet
 
 Verifica las instalaciones:
+

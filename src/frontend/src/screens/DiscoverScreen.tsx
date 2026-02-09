@@ -3,18 +3,28 @@ import { useDiscoverCandidates, useLikeUser } from '../hooks/useQueries';
 import { Level } from '../backend';
 import DiscoverCard from '../components/DiscoverCard';
 import DiscoverFilters from '../components/DiscoverFilters';
+import InlineSheetErrorBoundary from '../components/InlineSheetErrorBoundary';
 import { Button } from '@/components/ui/button';
 import { SlidersHorizontal, X, Heart } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { levelToKey, keyToLevel, LevelKey } from '../utils/discoverFilterMappings';
 
 export default function DiscoverScreen() {
-  const [filters, setFilters] = useState({
-    levelMin: Level.one,
-    levelMax: Level.five,
-    zone: '',
-  });
+  // UI state uses stable string keys
+  const [levelMinKey, setLevelMinKey] = useState<LevelKey>('1');
+  const [levelMaxKey, setLevelMaxKey] = useState<LevelKey>('5');
+  const [zone, setZone] = useState('');
+  const [sheetOpen, setSheetOpen] = useState(false);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [passedUsers, setPassedUsers] = useState<Set<string>>(new Set());
+
+  // Derive typed Filters object for backend query
+  const filters = {
+    levelMin: keyToLevel(levelMinKey),
+    levelMax: keyToLevel(levelMaxKey),
+    zone,
+  };
 
   const { data: candidates = [], isLoading } = useDiscoverCandidates(filters);
   const likeUser = useLikeUser();
@@ -42,7 +52,7 @@ export default function DiscoverScreen() {
   useEffect(() => {
     setCurrentIndex(0);
     setPassedUsers(new Set());
-  }, [filters]);
+  }, [levelMinKey, levelMaxKey, zone]);
 
   return (
     <div className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
@@ -57,17 +67,30 @@ export default function DiscoverScreen() {
           </p>
         </div>
 
-        <Sheet>
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="rounded-full">
-              <SlidersHorizontal className="h-5 w-5" />
+            <Button 
+              variant="outline" 
+              className="rounded-full px-6 py-2 h-auto font-semibold text-base border-2 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:border-emerald-500"
+            >
+              <SlidersHorizontal className="h-5 w-5 mr-2" />
+              FILTROS
             </Button>
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
               <SheetTitle>Filtros</SheetTitle>
             </SheetHeader>
-            <DiscoverFilters filters={filters} onFiltersChange={setFilters} />
+            <InlineSheetErrorBoundary onClose={() => setSheetOpen(false)}>
+              <DiscoverFilters
+                levelMin={levelMinKey}
+                levelMax={levelMaxKey}
+                zone={zone}
+                onLevelMinChange={setLevelMinKey}
+                onLevelMaxChange={setLevelMaxKey}
+                onZoneChange={setZone}
+              />
+            </InlineSheetErrorBoundary>
           </SheetContent>
         </Sheet>
       </div>
