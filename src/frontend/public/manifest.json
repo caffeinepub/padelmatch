@@ -1,6 +1,6 @@
 {
-  "name": "PadelMatch",
-  "short_name": "PadelMatch",
+  "name": "PlayPal",
+  "short_name": "PlayPal",
   "description": "Encuentra tu compañero de pádel perfecto",
   "start_url": "/",
   "display": "standalone",
@@ -10,7 +10,13 @@
   "categories": ["sports", "social"],
   "icons": [
     {
-      "src": "/assets/generated/padelmatch-logo.dim_512x512.png",
+      "src": "/assets/generated/playpal-logo.dim_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/generated/playpal-logo.dim_512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

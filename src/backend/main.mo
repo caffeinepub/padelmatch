@@ -90,13 +90,8 @@ actor {
 
   module ChatMessage {
     public func compare(c1 : ChatMessage, c2 : ChatMessage) : Order.Order {
-      switch (Principal.compare(c1.sender, c2.sender)) {
-        case (#equal) {
-          switch (Principal.compare(c1.recipient, c2.recipient)) {
-            case (#equal) { Text.compare(c1.content, c2.content) };
-            case (order) { order };
-          };
-        };
+      switch (Int.compare(c1.timestamp, c2.timestamp)) {
+        case (#equal) { Text.compare(c1.content, c2.content) };
         case (order) { order };
       };
     };
@@ -286,6 +281,18 @@ actor {
     );
   };
 
+  public query ({ caller }) func fetchNewMessagesSince(since : Time.Time) : async [ChatMessage] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can fetch messages");
+    };
+
+    messages.toArray().filter(
+      func(msg) {
+        msg.recipient == caller and msg.timestamp > since
+      }
+    );
+  };
+
   public query ({ caller }) func discoverCandidates(filters : Filters) : async [Profile] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can discover candidates");
@@ -311,6 +318,11 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can save profiles");
     };
+    
+    if (not Principal.equal(profile.id, caller)) {
+      Runtime.trap("Unauthorized: Can only save your own profile");
+    };
+    
     profiles.add(caller, profile);
   };
 

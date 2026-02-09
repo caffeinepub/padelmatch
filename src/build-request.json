@@ -1,57 +1,52 @@
 {
   "kind": "build_request",
-  "title": "Fix blank chat and missing matched user profile loading",
-  "priority": "high",
+  "title": "Restore PlayPal logo to gradient wordmark with underline",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Fix backend profile visibility so that a user can load the other person’s profile in the Matches list and Chat screen after a match (while still preventing arbitrary profile browsing). Specifically, update `getUserProfile(user : Principal)` to allow access when `caller == user` OR when `caller` and `user` are part of an existing match; otherwise keep the current authorization trap behavior.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-user-1"
-        ],
-        "quotes": [
-          "But once you match... the chat appears blank... not even the other profile loads... you can't write to each other."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Given users A and B have a match, when A calls `getUserProfile(B)`, the backend returns `?Profile` (not an authorization error).",
-        "Given users A and C do NOT have a match and A is not an admin, when A calls `getUserProfile(C)`, the backend traps with an unauthorized error (same protection as today).",
-        "Existing chat authorization remains enforced: `getChat` and `sendMessage` still trap when no match exists."
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Update the frontend Chat and Matches flows to avoid a blank screen when matched user profile/chat data is loading or fails. Ensure the UI shows an explicit loading state and a clear error message (and keeps the back navigation usable) when `useGetUserProfile(recipientId)` or `useGetChat(recipientId)` fails.",
+      "text": "Replace the current PlayPal logo assets with the previous-format PlayPal wordmark: the text “PlayPal” filled with a blue-to-yellow gradient and a single horizontal line underneath, keeping the app name as “PlayPal”. The updated logo must be used everywhere the app currently references the PlayPal logo assets under /assets/generated/ (PWA icons, Apple touch icon, and the Login screen logo image).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-1"
+          "recent-messages-3"
         ],
         "quotes": [
-          "the chat appears blank... not even the other profile loads... you can't write to each other."
+          "Déjale nombre PlayPal pero el logo devolve el formato de antes, PlayPal color azul y amarillo en degradado con una línea debajo"
         ]
       },
       "acceptanceCriteria": [
-        "Opening a match from the Matches screen transitions to Chat and always renders a header area (with skeleton/loading state until profile data is available).",
-        "If profile fetch fails, Chat shows a visible error state (not a blank header) and the user can still go back to Matches.",
-        "If chat messages fetch fails, Chat shows a visible error state (not a blank message area) and the user can still attempt to send a message or go back.",
-        "Matches list renders either the matched user profile card or a skeleton; it does not get stuck indefinitely due to authorization errors after REQ-1 is implemented."
+        "The following static assets exist at frontend/public/assets/generated and visually match the requested style (gradient PlayPal text with an underline): playpal-logo.dim_512x512.png, playpal-logo.dim_192x192.png, playpal-logo.dim_180x180.png.",
+        "The Login screen (frontend/src/screens/LoginScreen.tsx) renders the updated logo image at /assets/generated/playpal-logo.dim_512x512.png and the logo is visibly the gradient wordmark with an underline.",
+        "PWA metadata continues to reference the same logo asset paths (frontend/index.html apple-touch-icon and frontend/public/manifest.json icons), and the referenced files render the updated logo.",
+        "The production service worker precache list (frontend/public/service-worker.js) continues to include the same PlayPal logo filenames, and those cached files are the updated logo."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in `backend/main.mo`.",
-    "Do not edit files in `frontend/src/components/ui` or the immutable hook files listed in SYSTEM_CONTEXT."
+    "Do not change the application name; it must remain “PlayPal”.",
+    "Do not edit files under frontend/src/components/ui or other immutable paths listed in SYSTEM_CONTEXT."
   ],
   "nonGoals": [
-    "Implementing real-time chat via WebSockets or push notifications.",
-    "Adding new authentication providers beyond Internet Identity.",
-    "Changing the match creation logic or discovery filters behavior."
+    "Fixing or investigating the prior deployment failure (not requested).",
+    "Changing any other UI copy, language, or app theme beyond what is necessary to restore the requested logo format."
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "“PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_512x512.png, 512x512)",
+      "“PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_192x192.png, 192x192)",
+      "“PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_180x180.png, 180x180)"
+    ],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

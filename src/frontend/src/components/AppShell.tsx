@@ -1,20 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Home, MessageCircle, User, Settings } from 'lucide-react';
 import DiscoverScreen from '../screens/DiscoverScreen';
 import MatchesScreen from '../screens/MatchesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ChatScreen from '../screens/ChatScreen';
+import MatchProfileScreen from '../screens/MatchProfileScreen';
 import { Principal } from '@dfinity/principal';
+import { useMessageNotifications } from '../hooks/useMessageNotifications';
+import { Badge } from '@/components/ui/badge';
 
-type Screen = 'discover' | 'matches' | 'profile' | 'settings' | 'chat';
+type Screen = 'discover' | 'matches' | 'profile' | 'settings' | 'chat' | 'matchProfile';
 
 export default function AppShell() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('discover');
   const [chatRecipient, setChatRecipient] = useState<Principal | null>(null);
+  const [matchProfileUser, setMatchProfileUser] = useState<Principal | null>(null);
+  const [previousScreen, setPreviousScreen] = useState<Screen>('matches');
+
+  const { unreadCount, markAsRead } = useMessageNotifications(currentScreen, chatRecipient);
 
   const openChat = (recipientId: Principal) => {
+    // Mark this thread as read before opening
+    markAsRead(recipientId);
     setChatRecipient(recipientId);
+    setPreviousScreen(currentScreen);
     setCurrentScreen('chat');
   };
 
@@ -23,16 +33,49 @@ export default function AppShell() {
     setCurrentScreen('matches');
   };
 
+  const openMatchProfile = (userId: Principal, fromScreen: Screen = 'matches') => {
+    setMatchProfileUser(userId);
+    setPreviousScreen(fromScreen);
+    setCurrentScreen('matchProfile');
+  };
+
+  const closeMatchProfile = () => {
+    setMatchProfileUser(null);
+    setCurrentScreen(previousScreen);
+  };
+
+  // Keep marking as read while chat is open
+  useEffect(() => {
+    if (currentScreen === 'chat' && chatRecipient) {
+      markAsRead(chatRecipient);
+    }
+  }, [currentScreen, chatRecipient, markAsRead]);
+
   return (
     <div className="flex h-screen flex-col bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-emerald-950 dark:to-blue-950">
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-20">
         {currentScreen === 'discover' && <DiscoverScreen />}
-        {currentScreen === 'matches' && <MatchesScreen onOpenChat={openChat} />}
+        {currentScreen === 'matches' && (
+          <MatchesScreen 
+            onOpenChat={openChat} 
+            onOpenProfile={(userId) => openMatchProfile(userId, 'matches')}
+          />
+        )}
         {currentScreen === 'profile' && <ProfileScreen />}
         {currentScreen === 'settings' && <SettingsScreen />}
         {currentScreen === 'chat' && chatRecipient && (
-          <ChatScreen recipientId={chatRecipient} onBack={closeChat} />
+          <ChatScreen 
+            recipientId={chatRecipient} 
+            onBack={closeChat}
+            onOpenProfile={(userId) => openMatchProfile(userId, 'chat')}
+          />
+        )}
+        {currentScreen === 'matchProfile' && matchProfileUser && (
+          <MatchProfileScreen 
+            userId={matchProfileUser} 
+            onBack={closeMatchProfile}
+          />
         )}
       </main>
 
@@ -53,13 +96,23 @@ export default function AppShell() {
 
           <button
             onClick={() => setCurrentScreen('matches')}
-            className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
-              currentScreen === 'matches' || currentScreen === 'chat'
+            className={`flex flex-col items-center justify-center flex-1 h-full transition-colors relative ${
+              currentScreen === 'matches' || currentScreen === 'chat' || currentScreen === 'matchProfile'
                 ? 'text-emerald-600 dark:text-emerald-400'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            <MessageCircle className="h-6 w-6" />
+            <div className="relative">
+              <MessageCircle className="h-6 w-6" />
+              {unreadCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-2 -right-2 h-5 min-w-5 flex items-center justify-center p-0 px-1 text-xs"
+                >
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </Badge>
+              )}
+            </div>
             <span className="text-xs mt-1">Matches</span>
           </button>
 

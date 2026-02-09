@@ -1,14 +1,16 @@
-// PadelMatch Service Worker - Production Version
+// PlayPal Service Worker - Production Version
 // IMPORTANT: Increment CACHE_VERSION before each production deployment
-const CACHE_VERSION = 'v1';
-const CACHE_NAME = `padelmatch-${CACHE_VERSION}`;
+const CACHE_VERSION = 'v2';
+const CACHE_NAME = `playpal-${CACHE_VERSION}`;
 
 // Assets to precache (only stable shell assets)
 const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/assets/generated/padelmatch-logo.dim_512x512.png'
+  '/assets/generated/playpal-logo.dim_512x512.png',
+  '/assets/generated/playpal-logo.dim_192x192.png',
+  '/assets/generated/playpal-logo.dim_180x180.png'
 ];
 
 // Install event - precache shell assets
@@ -42,10 +44,11 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames
             .filter((cacheName) => {
-              // Keep only caches that match our naming pattern
+              // Keep only caches that match our naming pattern (both old and new)
+              const isPlayPalCache = cacheName.startsWith('playpal-');
               const isPadelMatchCache = cacheName.startsWith('padelmatch-');
               const isCurrentVersion = cacheName === CACHE_NAME;
-              return isPadelMatchCache && !isCurrentVersion;
+              return (isPlayPalCache || isPadelMatchCache) && !isCurrentVersion;
             })
             .map((cacheName) => {
               console.log(`[SW] Deleting old cache: ${cacheName}`);
@@ -139,4 +142,4 @@ self.addEventListener('message', (event) => {
 });
 
 // Log version on startup
-console.log(`[SW] PadelMatch Service Worker ${CACHE_VERSION} loaded`);
+console.log(`[SW] PlayPal Service Worker ${CACHE_VERSION} loaded`);

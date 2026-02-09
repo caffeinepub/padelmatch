@@ -188,7 +188,26 @@ export function useGetChat(recipientId: Principal | null) {
     queryKey: ['chat', recipientId?.toString()],
     queryFn: async () => {
       if (!actor || !recipientId) return [];
-      return actor.getChat(recipientId);
+      const messages = await actor.getChat(recipientId);
+      
+      // Sort messages by timestamp ascending (chronological order)
+      // Add deterministic tie-breakers for messages with identical timestamps
+      return messages.sort((a, b) => {
+        // Primary sort: timestamp ascending
+        const timestampDiff = Number(a.timestamp - b.timestamp);
+        if (timestampDiff !== 0) return timestampDiff;
+        
+        // Tie-breaker 1: content comparison
+        const contentCompare = a.content.localeCompare(b.content);
+        if (contentCompare !== 0) return contentCompare;
+        
+        // Tie-breaker 2: sender principal
+        const senderCompare = a.sender.toString().localeCompare(b.sender.toString());
+        if (senderCompare !== 0) return senderCompare;
+        
+        // Tie-breaker 3: recipient principal
+        return a.recipient.toString().localeCompare(b.recipient.toString());
+      });
     },
     enabled: !!actor && !actorFetching && !!recipientId,
     refetchInterval: 3000, // Poll every 3 seconds

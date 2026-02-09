@@ -1,27 +1,4 @@
 {
   "kind": "feature_evidence_report",
-  "features": [
-    {
-      "featureId": "feature-update-the-frontend-chat-and-matches-flows-to-avoid-a-blank-screen-when-matched-user-profile-chat-data-is-loading-or-fails-ensure-the-ui-shows-an-explicit-loading-state-and-a-clear-error-message-and-keeps-the-back-navigation-usable-when-usegetuserprofile-recipientid-or-usegetchat-recipientid-fails",
-      "featureTitle": "Update the frontend Chat and Matches flows to avoid a blank screen when matched user profile/chat data is loading or fails. Ensure the UI shows an explicit loading state and a clear error message (and keeps the back navigation usable) when `useGetUserProfile(recipientId)` or `useGetChat(recipientId)` fails.",
-      "files": [
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/screens/ChatScreen.tsx",
-        "frontend/src/screens/MatchesScreen.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    }
-  ]
+  "features": []
 }

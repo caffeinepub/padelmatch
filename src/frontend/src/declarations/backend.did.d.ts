@@ -87,6 +87,7 @@ export interface _SERVICE {
     undefined
   >,
   'discoverCandidates' : ActorMethod<[Filters], Array<Profile>>,
+  'fetchNewMessagesSince' : ActorMethod<[Time], Array<ChatMessage>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [Profile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getChat' : ActorMethod<[Principal], Array<ChatMessage>>,

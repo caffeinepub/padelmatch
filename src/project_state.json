@@ -1,33 +1,32 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
+  "summary": "Project named PlayPal; needs a logo in the previous format: the word \"PlayPal\" with a blue-to-yellow gradient and a line underneath.",
   "architectural_notes": [],
   "known_issues": [
-    "After a successful match, the chat area shows blank and the other user's profile in the chats section does not load, preventing messaging between matched users."
+    "Deployment failed / unable to complete deployment (deployment error)."
   ],
   "isFixRequest": true,
-  "existing_features": [
-    {
-      "id": "feature-update-the-frontend-chat-and-matches-flows-to-avoid-a-blank-screen-when-matched-user-profile-chat-data-is-loading-or-fails-ensure-the-ui-shows-an-explicit-loading-state-and-a-clear-error-message-and-keeps-the-back-navigation-usable-when-usegetuserprofile-recipientid-or-usegetchat-recipientid-fails",
-      "title": "Update the frontend Chat and Matches flows to avoid a blank screen when matched user profile/chat data is loading or fails. Ensure the UI shows an explicit loading state and a clear error message (and keeps the back navigation usable) when `useGetUserProfile(recipientId)` or `useGetChat(recipientId)` fails.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    }
-  ],
+  "imageRequirements": "## Required Images\n- “PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_512x512.png, 512x512)\n- “PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_192x192.png, 192x192)\n- “PlayPal” wordmark with a smooth blue-to-yellow gradient fill and a single thin horizontal underline below the text, centered on a transparent background (playpal-logo.dim_180x180.png, 180x180)",
+  "existing_features": [],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Fix backend profile visibility so that a user can load the other person’s profile in the Matches list and Chat screen after a match (while still preventing arbitrary profile browsing). Specifically, update `getUserProfile(user : Principal)` to allow access when `caller == user` OR when `caller` and `user` are part of an existing match; otherwise keep the current authorization trap behavior.",
+      "summary": "Restore/create PlayPal logo in previous format (blue-to-yellow gradient text with an underline).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Replace the current PlayPal logo assets with the previous-format PlayPal wordmark: the text “PlayPal” filled with a blue-to-yellow gradient and a single horizontal line underneath, keeping the app name as “PlayPal”. The updated logo must be used everywhere the app currently references the PlayPal logo assets under /assets/generated/ (PWA icons, Apple touch icon, and the Login screen logo image).",
       "reqIds": [
         "REQ-1"
       ],
       "status": "pending"
     }
   ],
-  "projectName": "Fix blank chat and missing matched user profile loading",
+  "gameProjectType": "none",
+  "projectName": "PlayPal",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

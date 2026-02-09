@@ -1,11 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Fix blank chat and ensure matched users’ profiles load correctly after a match while preserving existing profile privacy rules.
+**Goal:** Restore the PlayPal logo to the previous gradient “PlayPal” wordmark with a single underline, and ensure it appears consistently across app icons and the Login screen without changing the app name.
 
 **Planned changes:**
-- Backend: Update `getUserProfile(user : Principal)` authorization to allow access when the caller is the same user or when the caller and target user are part of an existing match; otherwise keep the current unauthorized trap behavior.
-- Frontend: Update Matches and Chat screens to show explicit loading states (e.g., skeleton/header placeholder) while profile/chat data is being fetched.
-- Frontend: Add clear, visible error states for failures from `useGetUserProfile(recipientId)` and/or `useGetChat(recipientId)` that avoid blank screens and keep back navigation usable.
+- Replace the existing PlayPal logo assets in `frontend/public/assets/generated/` with updated versions that match the gradient wordmark + underline style.
+- Ensure the Login screen (`frontend/src/screens/LoginScreen.tsx`) continues to reference and display `/assets/generated/playpal-logo.dim_512x512.png`, now showing the restored logo style.
+- Keep existing PWA/Apple touch icon references (`frontend/public/manifest.json`, `frontend/index.html`) pointing to the same filenames while updating the underlying image files.
+- Keep the service worker precache list (`frontend/public/service-worker.js`) referencing the same PlayPal logo filenames, with the cached files now being the updated logo.
 
-**User-visible outcome:** Opening a match reliably shows the other user’s profile header and chat area with loading placeholders while data loads; if something fails, the app shows an error message instead of a blank screen and the user can still navigate back (and messaging remains restricted to matched users only).
+**User-visible outcome:** Users will see the restored PlayPal gradient wordmark with an underline on the Login screen and as the app icon (PWA and Apple touch icon), with the app name still “PlayPal”.

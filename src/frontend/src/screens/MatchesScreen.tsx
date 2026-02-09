@@ -10,9 +10,10 @@ import { Principal } from '@dfinity/principal';
 
 interface MatchesScreenProps {
   onOpenChat: (recipientId: Principal) => void;
+  onOpenProfile: (userId: Principal) => void;
 }
 
-export default function MatchesScreen({ onOpenChat }: MatchesScreenProps) {
+export default function MatchesScreen({ onOpenChat, onOpenProfile }: MatchesScreenProps) {
   const { identity } = useInternetIdentity();
   const { data: matches = [], isLoading } = useGetMatches();
 
@@ -46,7 +47,14 @@ export default function MatchesScreen({ onOpenChat }: MatchesScreenProps) {
           {matches.map((match) => {
             const otherUserId =
               match.user1.toString() === myPrincipal ? match.user2 : match.user1;
-            return <MatchCard key={match.createdAt.toString()} userId={otherUserId} onOpenChat={onOpenChat} />;
+            return (
+              <MatchCard 
+                key={match.createdAt.toString()} 
+                userId={otherUserId} 
+                onOpenChat={onOpenChat}
+                onOpenProfile={onOpenProfile}
+              />
+            );
           })}
         </div>
       )}
@@ -54,7 +62,15 @@ export default function MatchesScreen({ onOpenChat }: MatchesScreenProps) {
   );
 }
 
-function MatchCard({ userId, onOpenChat }: { userId: Principal; onOpenChat: (id: Principal) => void }) {
+function MatchCard({ 
+  userId, 
+  onOpenChat, 
+  onOpenProfile 
+}: { 
+  userId: Principal; 
+  onOpenChat: (id: Principal) => void;
+  onOpenProfile: (id: Principal) => void;
+}) {
   const { data: profile, isLoading, error, refetch } = useGetUserProfile(userId);
 
   if (isLoading) {
@@ -115,22 +131,29 @@ function MatchCard({ userId, onOpenChat }: { userId: Principal; onOpenChat: (id:
   }
 
   return (
-    <Card
-      className="cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={() => onOpenChat(userId)}
-    >
+    <Card className="hover:shadow-lg transition-shadow">
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
           <div className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0">
             <UserAvatar photo={profile.photo} name={profile.name} />
           </div>
-          <div className="flex-1 min-w-0">
+          <button
+            onClick={() => onOpenProfile(userId)}
+            className="flex-1 min-w-0 text-left hover:opacity-80 transition-opacity"
+          >
             <h3 className="font-semibold text-lg truncate">{profile.name}</h3>
             <p className="text-sm text-muted-foreground">
               {Number(profile.age)} años • {profile.zone}
             </p>
-          </div>
-          <MessageCircle className="h-6 w-6 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+          </button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onOpenChat(userId)}
+            className="flex-shrink-0 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900"
+          >
+            <MessageCircle className="h-6 w-6" />
+          </Button>
         </div>
       </CardContent>
     </Card>

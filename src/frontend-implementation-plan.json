@@ -1,32 +1,52 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add resilient loading/error states for Matches and Chat to prevent blank screens",
+  "title": "Restore PlayPal gradient wordmark logo assets across PWA + Login",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Show explicit loading and error UI in Matches and Chat when matched user profile or chat data is loading/fails, while preserving back navigation and message sending.",
+      "id": "REQ-1",
+      "summary": "Replace PlayPal logo image assets with the previous gradient wordmark + underline format and ensure all existing references (Login, PWA icons, Apple touch icon, service worker precache) continue to point to the same filenames.",
       "acceptanceCriteria": [
-        "Opening a match from the Matches screen transitions to Chat and always renders a header area (with skeleton/loading state until profile data is available).",
-        "If profile fetch fails, Chat shows a visible error state (not a blank header) and the user can still go back to Matches.",
-        "If chat messages fetch fails, Chat shows a visible error state (not a blank message area) and the user can still attempt to send a message or go back.",
-        "Matches list renders either the matched user profile card or a skeleton; it does not get stuck indefinitely due to authorization errors after REQ-1 is implemented."
+        "The following static assets exist at frontend/public/assets/generated and visually match the requested style (gradient PlayPal text with an underline): playpal-logo.dim_512x512.png, playpal-logo.dim_192x192.png, playpal-logo.dim_180x180.png.",
+        "The Login screen (frontend/src/screens/LoginScreen.tsx) renders the updated logo image at /assets/generated/playpal-logo.dim_512x512.png and the logo is visibly the gradient wordmark with an underline.",
+        "PWA metadata continues to reference the same logo asset paths (frontend/index.html apple-touch-icon and frontend/public/manifest.json icons), and the referenced files render the updated logo.",
+        "The production service worker precache list (frontend/public/service-worker.js) continues to include the same PlayPal logo filenames, and those cached files are the updated logo."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/public/assets/generated/playpal-logo.dim_512x512.png",
           "operation": "modify",
-          "description": "Update chat/profile react-query hooks used by Matches/Chat to surface loading/error states reliably (e.g., ensure errors propagate instead of appearing as perpetual skeletons; disable infinite retries where appropriate). This supports graceful handling of authorization traps per the authorization component guidance. Verify the component's usage instructions before implementing."
+          "description": "Replace the existing 512x512 PlayPal logo image with the requested gradient “PlayPal” wordmark plus a single thin underline on transparent background, keeping the exact filename and dimensions (512x512)."
         },
         {
-          "path": "frontend/src/screens/ChatScreen.tsx",
+          "path": "frontend/public/assets/generated/playpal-logo.dim_192x192.png",
           "operation": "modify",
-          "description": "Ensure Chat never renders a blank header or blank message area: always render the header container with a skeleton while recipient profile is loading; show a clear, visible error state if useGetUserProfile(recipientId) fails while keeping the back button usable. Add an explicit loading state for chat messages, and a visible error state if useGetChat(recipientId) fails, while keeping the message input enabled so the user can still attempt to send or navigate back. Verify the component's usage instructions before implementing."
+          "description": "Replace the existing 192x192 PlayPal logo image with the requested gradient “PlayPal” wordmark plus a single thin underline on transparent background, keeping the exact filename and dimensions (192x192)."
         },
         {
-          "path": "frontend/src/screens/MatchesScreen.tsx",
+          "path": "frontend/public/assets/generated/playpal-logo.dim_180x180.png",
           "operation": "modify",
-          "description": "Prevent match cards from getting stuck as skeletons: in MatchCard, use useGetUserProfile(userId) loading/error state to render (a) skeleton while loading, (b) a clear inline error message with an optional retry action when the profile fetch fails, and (c) the normal profile card when available. Verify the component's usage instructions before implementing."
+          "description": "Replace the existing 180x180 PlayPal logo image with the requested gradient “PlayPal” wordmark plus a single thin underline on transparent background, keeping the exact filename and dimensions (180x180)."
+        },
+        {
+          "path": "frontend/src/screens/LoginScreen.tsx",
+          "operation": "modify",
+          "description": "Ensure the Login screen continues to render the logo from /assets/generated/playpal-logo.dim_512x512.png and that no app-name text is changed (must remain “PlayPal”)."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Confirm the Apple touch icon link continues referencing /assets/generated/playpal-logo.dim_180x180.png (no app-name changes; must remain “PlayPal”)."
+        },
+        {
+          "path": "frontend/public/manifest.json",
+          "operation": "modify",
+          "description": "Confirm the PWA manifest continues referencing /assets/generated/playpal-logo.dim_192x192.png and /assets/generated/playpal-logo.dim_512x512.png for icons (no app-name changes; must remain “PlayPal”)."
+        },
+        {
+          "path": "frontend/public/service-worker.js",
+          "operation": "modify",
+          "description": "Confirm the precache list continues to include /assets/generated/playpal-logo.dim_512x512.png, /assets/generated/playpal-logo.dim_192x192.png, and /assets/generated/playpal-logo.dim_180x180.png so updated logo files are cached under the same filenames."
         }
       ]
     }

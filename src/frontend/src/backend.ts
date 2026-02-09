@@ -159,6 +159,7 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createProfile(name: string, age: bigint, level: Level, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
     discoverCandidates(filters: Filters): Promise<Array<Profile>>;
+    fetchNewMessagesSince(since: Time): Promise<Array<ChatMessage>>;
     getCallerUserProfile(): Promise<Profile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getChat(recipient: Principal): Promise<Array<ChatMessage>>;
@@ -313,6 +314,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.discoverCandidates(to_candid_Filters_n14(this._uploadFile, this._downloadFile, arg0));
             return from_candid_vec_n16(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async fetchNewMessagesSince(arg0: Time): Promise<Array<ChatMessage>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.fetchNewMessagesSince(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.fetchNewMessagesSince(arg0);
+            return result;
         }
     }
     async getCallerUserProfile(): Promise<Profile | null> {

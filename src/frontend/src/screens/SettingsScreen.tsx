@@ -63,7 +63,7 @@ export default function SettingsScreen() {
           <CardTitle>Acerca de</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground space-y-2">
-          <p>PadelMatch v1.0</p>
+          <p>PlayPal v1.0</p>
           <p>Encuentra tu compañero de pádel perfecto</p>
           <p className="pt-4 text-xs">
             © 2026. Built with ❤️ using{' '}

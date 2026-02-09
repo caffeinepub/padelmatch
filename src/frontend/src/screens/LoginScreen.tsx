@@ -11,8 +11,8 @@ export default function LoginScreen() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <img
-            src="/assets/generated/padelmatch-logo.dim_512x512.png"
-            alt="PadelMatch"
+            src="/assets/generated/playpal-logo.dim_512x512.png"
+            alt="PlayPal"
             className="h-32 w-auto"
           />
         </div>
@@ -20,7 +20,7 @@ export default function LoginScreen() {
         {/* Tagline */}
         <div className="space-y-3">
           <h1 className="text-4xl font-bold text-emerald-700 dark:text-emerald-400">
-            PadelMatch
+            PlayPal
           </h1>
           <p className="text-lg text-muted-foreground">
             Encuentra tu compañero de pádel perfecto

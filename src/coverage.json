@@ -1,48 +1,40 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-08T18:10:27.369Z",
+  "generatedAt": "2026-02-09T16:15:48.100Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 1,
+    "total": 1,
+    "implemented": 0,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Fix backend profile visibility so that a user can load the other person’s profile in the Matches list and Chat screen after a match (while still preventing arbitrary profile browsing). Specifically, update `getUserProfile(user : Principal)` to allow access when `caller == user` OR when `caller` and `user` are part of an existing match; otherwise keep the current authorization trap behavior.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Update the frontend Chat and Matches flows to avoid a blank screen when matched user profile/chat data is loading or fails. Ensure the UI shows an explicit loading state and a clear error message (and keeps the back navigation usable) when `useGetUserProfile(recipientId)` or `useGetChat(recipientId)` fails.",
-        "status": "implemented",
+        "summary": "Replace the current PlayPal logo assets with the previous-format PlayPal wordmark: the text “PlayPal” filled with a blue-to-yellow gradient and a single horizontal line underneath, keeping the app name as “PlayPal”. The updated logo must be used everywhere the app currently references the PlayPal logo assets under /assets/generated/ (PWA icons, Apple touch icon, and the Login screen logo image).",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/screens/ChatScreen.tsx",
-          "frontend/src/screens/MatchesScreen.tsx"
+          "frontend/public/assets/generated/playpal-logo.dim_512x512.png",
+          "frontend/public/assets/generated/playpal-logo.dim_192x192.png",
+          "frontend/public/assets/generated/playpal-logo.dim_180x180.png",
+          "frontend/src/screens/LoginScreen.tsx",
+          "frontend/index.html",
+          "frontend/public/manifest.json",
+          "frontend/public/service-worker.js"
         ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/screens/ChatScreen.tsx",
-          "frontend/src/screens/MatchesScreen.tsx"
-        ]
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/screens/ChatScreen.tsx",
-    "frontend/src/screens/MatchesScreen.tsx",
+    "frontend/public/assets/generated/playpal-logo.dim_180x180.png, 180x180",
+    "frontend/public/assets/generated/playpal-logo.dim_192x192.png, 192x192",
+    "frontend/public/assets/generated/playpal-logo.dim_512x512.png, 512x512",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

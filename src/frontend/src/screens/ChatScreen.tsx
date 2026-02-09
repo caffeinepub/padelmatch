@@ -13,9 +13,10 @@ import ChatMessageBubble from '../components/ChatMessageBubble';
 interface ChatScreenProps {
   recipientId: Principal;
   onBack: () => void;
+  onOpenProfile: (userId: Principal) => void;
 }
 
-export default function ChatScreen({ recipientId, onBack }: ChatScreenProps) {
+export default function ChatScreen({ recipientId, onBack, onOpenProfile }: ChatScreenProps) {
   const { identity } = useInternetIdentity();
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -46,10 +47,12 @@ export default function ChatScreen({ recipientId, onBack }: ChatScreenProps) {
     );
   };
 
-  // Auto-scroll to bottom
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages.length]);
+
+  const canOpenProfile = !profileLoading && !profileError && recipientProfile;
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-900">
@@ -77,10 +80,14 @@ export default function ChatScreen({ recipientId, onBack }: ChatScreenProps) {
             <div className="h-10 w-10 rounded-full overflow-hidden">
               <UserAvatar photo={recipientProfile.photo} name={recipientProfile.name} />
             </div>
-            <div className="flex-1 min-w-0">
+            <button
+              onClick={() => canOpenProfile && onOpenProfile(recipientId)}
+              disabled={!canOpenProfile}
+              className="flex-1 min-w-0 text-left hover:opacity-80 transition-opacity disabled:opacity-100 disabled:cursor-default"
+            >
               <h2 className="font-semibold truncate">{recipientProfile.name}</h2>
               <p className="text-xs text-muted-foreground">{recipientProfile.zone}</p>
-            </div>
+            </button>
           </>
         ) : (
           <div className="flex-1 text-muted-foreground text-sm">
@@ -109,13 +116,18 @@ export default function ChatScreen({ recipientId, onBack }: ChatScreenProps) {
             <p className="text-sm mt-2">¡Envía el primer mensaje!</p>
           </div>
         ) : (
-          messages.map((msg, i) => (
-            <ChatMessageBubble
-              key={i}
-              message={msg}
-              isOwn={msg.sender.toString() === myPrincipal}
-            />
-          ))
+          messages.map((msg, index) => {
+            // Create a stable key using timestamp, sender, recipient, content, and index as final tie-breaker
+            const stableKey = `${msg.timestamp}-${msg.sender.toString()}-${msg.recipient.toString()}-${msg.content.substring(0, 20)}-${index}`;
+            
+            return (
+              <ChatMessageBubble
+                key={stableKey}
+                message={msg}
+                isOwn={msg.sender.toString() === myPrincipal}
+              />
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>

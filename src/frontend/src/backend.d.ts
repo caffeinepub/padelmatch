@@ -66,6 +66,7 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createProfile(name: string, age: bigint, level: Level, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
     discoverCandidates(filters: Filters): Promise<Array<Profile>>;
+    fetchNewMessagesSince(since: Time): Promise<Array<ChatMessage>>;
     getCallerUserProfile(): Promise<Profile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getChat(recipient: Principal): Promise<Array<ChatMessage>>;
