@@ -1,56 +1,78 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T22:35:44.374Z",
+  "generatedAt": "2026-02-09T22:44:32.972Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 5,
+    "implemented": 5,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Fix the runtime crash that causes a blank/white screen when the user taps the \"FILTROS\" button in the Discover screen, so the filters sheet opens reliably and renders the filter controls.",
+        "summary": "Reduce perceived initial load time by avoiding a full-screen blocking spinner whenever possible; keep the app shell responsive while data loads, and only block when absolutely required to prevent incorrect navigation (e.g., deciding between Profile Setup vs Main App).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/DiscoverFilters.tsx",
-          "frontend/src/screens/DiscoverScreen.tsx",
-          "frontend/src/utils/discoverFilterMappings.ts"
+          "frontend/src/App.tsx",
+          "frontend/src/components/StartupShell.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/DiscoverFilters.tsx",
-          "frontend/src/screens/DiscoverScreen.tsx",
-          "frontend/src/utils/discoverFilterMappings.ts"
+          "frontend/src/App.tsx",
+          "frontend/src/components/StartupShell.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Update the Discover filters UI implementation to ensure Shadcn Select components use stable string values (and not candid/IDL enum/variant objects) for their `value` / `SelectItem value` props, while still producing a valid `Filters` object for `useDiscoverCandidates(filters)`.",
+        "summary": "Implement route/screen code-splitting for non-initial screens to reduce initial JS bundle size (e.g., lazy-load Matches, Profile, Settings, Chat, and Match Profile screens) and show a lightweight fallback while chunks load.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/utils/discoverFilterMappings.ts",
-          "frontend/src/components/DiscoverFilters.tsx",
-          "frontend/src/screens/DiscoverScreen.tsx"
+          "frontend/src/components/AppShell.tsx",
+          "frontend/src/components/InlineScreenFallback.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/utils/discoverFilterMappings.ts",
-          "frontend/src/components/DiscoverFilters.tsx",
-          "frontend/src/screens/DiscoverScreen.tsx"
+          "frontend/src/components/AppShell.tsx",
+          "frontend/src/components/InlineScreenFallback.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Add a minimal, user-safe failure mode for the Discover filters panel rendering: if the filters UI throws during render, show a small inline error state inside the sheet instead of blanking the entire app view.",
+        "summary": "Tune React Query defaults and key queries for faster startup and fewer unnecessary refetches (e.g., set sensible staleTime/refetchOnWindowFocus/refetchOnMount defaults; apply conservative retries/delays) while preserving correctness.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/InlineSheetErrorBoundary.tsx",
-          "frontend/src/screens/DiscoverScreen.tsx"
+          "frontend/src/main.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/InlineSheetErrorBoundary.tsx",
-          "frontend/src/screens/DiscoverScreen.tsx"
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Defer heavy background work that is not required for first render (e.g., message notification polling initialization) until after the main screen is visible, so it does not compete with first-load rendering/network requests.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/AppShell.tsx",
+          "frontend/src/hooks/useMessageNotifications.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/AppShell.tsx",
+          "frontend/src/hooks/useMessageNotifications.ts"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Add lightweight, developer-visible performance instrumentation for startup (e.g., measure time from app bootstrap to first meaningful render and log it in development builds) to validate improvements over time.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/utils/startupPerf.ts",
+          "frontend/src/main.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/utils/startupPerf.ts",
+          "frontend/src/App.tsx"
         ]
       }
     ]
@@ -60,10 +82,13 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/DiscoverFilters.tsx",
-    "frontend/src/components/InlineSheetErrorBoundary.tsx",
-    "frontend/src/screens/DiscoverScreen.tsx",
-    "frontend/src/utils/discoverFilterMappings.ts",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AppShell.tsx",
+    "frontend/src/components/InlineScreenFallback.tsx",
+    "frontend/src/components/StartupShell.tsx",
+    "frontend/src/hooks/useMessageNotifications.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/utils/startupPerf.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,25 +1,45 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T22:35:44.371Z",
-  "summary": "The diff implements the requested frontend-only fix by (1) switching Discover filter Select values to stable string keys with mapping back to backend Level types, (2) wiring the Discover screen to use these keys while still producing a typed filters object for useDiscoverCandidates(filters), and (3) adding an inline error boundary inside the Sheet content with a close action to prevent a full-screen white crash if rendering fails.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-09T22:44:32.969Z",
+  "summary": "Most performance-focused requirements are implemented: a lightweight startup shell replaces a blocking spinner during critical auth/profile gating; non-initial screens are lazy-loaded with an inline fallback; message notification polling is deferred; and dev-only startup performance instrumentation is added. React Query is tuned at least for key queries, but the diff does not clearly show global React Query default option tuning (e.g., QueryClient defaultOptions). Some unrelated product/UI/branding changes are described in frontend-file-summaries.txt without being requested.",
+  "missing_requirements": [
     {
-      "description": "Adds a \"Reintentar\" (Retry) button in the inline sheet error state, which was not explicitly requested (only an inline error message and a way to close were required).",
-      "reason": "REQ-3 acceptance criteria mention an inline error message and a way to close the sheet; retry behavior is extra beyond the stated minimum recovery requirement.",
+      "id": "REQ-3",
+      "requirement": "Tune React Query defaults (e.g., staleTime/refetchOnWindowFocus/refetchOnMount defaults; conservative retries/delays) for faster startup and fewer unnecessary refetches while preserving correctness.",
+      "reason": "The diff shows per-query tuning for at least the profile queries (staleTime/retry/refetchOnMount), but it does not provide evidence of setting global React Query defaults (e.g., QueryClient defaultOptions) as explicitly requested.",
       "evidence": [
-        "frontend/src/components/InlineSheetErrorBoundary.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/App.tsx"
       ]
     }
   ],
-  "confidence": 0.84,
+  "hallucinated_features": [
+    {
+      "description": "Login screen branding/layout changes and UTM tracking link attribution (\"PlayPal\" branding, two vertically-stacked buttons, dynamic year footer, UTM tracking for caffeine.ai attribution link).",
+      "reason": "Not requested by the BuildRequest (non-goal: no product feature changes unrelated to load performance). These items appear as described changes in the summary file, but are unrelated to the performance requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "PWA/iOS meta tag additions and broader design/theme overhauls (emerald/blue sports theme tokens, global OKLCH color system, Tailwind palette extensions).",
+      "reason": "Not requested by the BuildRequest and unrelated to initial load performance requirements; mentioned in the summary file.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    }
+  ],
+  "confidence": 0.66,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/DiscoverFilters.tsx",
-    "frontend/src/components/InlineSheetErrorBoundary.tsx",
-    "frontend/src/screens/DiscoverScreen.tsx",
-    "frontend/src/utils/discoverFilterMappings.ts",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AppShell.tsx",
+    "frontend/src/components/InlineScreenFallback.tsx",
+    "frontend/src/components/StartupShell.tsx",
+    "frontend/src/hooks/useMessageNotifications.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/utils/startupPerf.ts",
     "project_state.json"
   ]
 }

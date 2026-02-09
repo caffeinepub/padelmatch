@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Fix the Discover screen crash/white screen when tapping the “FILTROS” button so the filters sheet opens reliably and renders its controls.
+**Goal:** Reduce initial page load time and perceived latency by keeping the app responsive during startup and cutting unnecessary upfront work.
 
 **Planned changes:**
-- Fix the Discover filters sheet runtime crash so opening “FILTROS” does not blank the app and no uncaught exceptions occur.
-- Update the filters UI to use stable string values for Shadcn Select `value` / `SelectItem value` props while still mapping selections to a valid `Filters` object for `useDiscoverCandidates(filters)`.
-- Add a minimal safe failure mode for the filters panel: if the filters UI throws during render, show an inline error state inside the sheet with a way to close it (without breaking the rest of Discover).
+- Replace the long full-screen blocking spinner with a fast-rendering app shell and lightweight inline loading/skeleton states; only block navigation when required to decide between Profile Setup vs Main App.
+- Add route/screen code-splitting for non-initial screens (e.g., Matches, Profile, Settings, Chat, Match Profile) with small inline fallbacks while modules load.
+- Tune React Query defaults and key queries to reduce unnecessary startup refetches (e.g., sensible staleTime/refetchOnWindowFocus/refetchOnMount, conservative retries/delays) while preserving correctness.
+- Defer non-critical background work (e.g., notification/message polling initialization) until after the main UI is visible.
+- Add developer-only startup performance instrumentation that logs timings (bootstrap → first meaningful render) in development builds.
 
-**User-visible outcome:** Tapping “FILTROS” opens a working filters sheet (minimum level, maximum level, zone) without crashing; selections display correctly and refresh results, and any unexpected filters UI error is contained to the sheet with a recoverable inline message.
+**User-visible outcome:** The app shows a usable UI faster on startup with fewer blocking loaders, navigation remains correct (including profile setup routing), and subsequent screens load smoothly with lightweight inline loading while their code downloads.

@@ -1,74 +1,120 @@
 {
   "kind": "build_request",
-  "title": "Fix white screen crash when tapping the Discover 'FILTROS' button",
-  "priority": "high",
+  "title": "Reduce initial page load time and perceived latency",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Fix the runtime crash that causes a blank/white screen when the user taps the \"FILTROS\" button in the Discover screen, so the filters sheet opens reliably and renders the filter controls.",
+      "text": "Reduce perceived initial load time by avoiding a full-screen blocking spinner whenever possible; keep the app shell responsive while data loads, and only block when absolutely required to prevent incorrect navigation (e.g., deciding between Profile Setup vs Main App).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "TOCO EL BOTON FILTROS Y SE PONE LA PANTALLA EN BLANCO"
+          "demora demasiado en cargar la pagina, hace que demore menos"
         ]
       },
       "acceptanceCriteria": [
-        "From the Discover screen, tapping the \"FILTROS\" button opens the sheet and the app does not render a blank/white screen.",
-        "No uncaught exceptions are thrown when opening the sheet (check browser console).",
-        "The sheet renders the three filter controls (minimum level, maximum level, zone) without errors."
+        "When opening the app on a normal connection, the UI shows an interactive shell (or lightweight skeleton) quickly instead of a long full-screen loader.",
+        "The app still correctly routes authenticated users without profiles to the profile setup flow once the profile query resolves.",
+        "No white-screen or blank-screen state occurs during the transition from loading to loaded states."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Update the Discover filters UI implementation to ensure Shadcn Select components use stable string values (and not candid/IDL enum/variant objects) for their `value` / `SelectItem value` props, while still producing a valid `Filters` object for `useDiscoverCandidates(filters)`.",
+      "text": "Implement route/screen code-splitting for non-initial screens to reduce initial JS bundle size (e.g., lazy-load Matches, Profile, Settings, Chat, and Match Profile screens) and show a lightweight fallback while chunks load.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "TOCO EL BOTON FILTROS Y SE PONE LA PANTALLA EN BLANCO"
+          "demora demasiado en cargar la pagina, hace que demore menos"
         ]
       },
       "acceptanceCriteria": [
-        "Opening the filters sheet does not crash even if `Level` is represented as a non-string candid/IDL type at runtime.",
-        "Selecting \"Minimum level\" and \"Maximum level\" updates the Discover screen results (query refresh) without errors.",
-        "All Selects show the currently selected value correctly after changes and after closing/reopening the sheet."
+        "Initial bundle work is reduced by lazy-loading screens not needed on first paint.",
+        "Navigating to a lazy-loaded screen shows a small inline loading fallback (not a full-screen blank state) until the screen module is loaded.",
+        "All navigation paths continue to work (Discover, Matches, Profile, Settings, Chat, Match Profile)."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Add a minimal, user-safe failure mode for the Discover filters panel rendering: if the filters UI throws during render, show a small inline error state inside the sheet instead of blanking the entire app view.",
+      "text": "Tune React Query defaults and key queries for faster startup and fewer unnecessary refetches (e.g., set sensible staleTime/refetchOnWindowFocus/refetchOnMount defaults; apply conservative retries/delays) while preserving correctness.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-4"
         ],
         "quotes": [
-          "TOCO EL BOTON FILTROS Y SE PONE LA PANTALLA EN BLANCO"
+          "demora demasiado en cargar la pagina, hace que demore menos"
         ]
       },
       "acceptanceCriteria": [
-        "If an error occurs while rendering the filters panel, the rest of the Discover screen remains visible and interactive.",
-        "The sheet content shows an inline error message and a way to close the sheet (so the user can recover without refresh)."
+        "On a reload, the app issues fewer immediate network requests that are not required for the first screen to render.",
+        "Queries do not aggressively refetch on window focus during normal use unless the data is likely stale.",
+        "No regressions: profile, discover candidates, matches, and chat still load and update as expected."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Defer heavy background work that is not required for first render (e.g., message notification polling initialization) until after the main screen is visible, so it does not compete with first-load rendering/network requests.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "demora demasiado en cargar la pagina, hace que demore menos"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On first load into the authenticated app, non-critical polling/background tasks start after the initial UI becomes visible.",
+        "Unread message indicators and notifications still function after the deferred start.",
+        "No increase in error logs related to deferred initialization."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Add lightweight, developer-visible performance instrumentation for startup (e.g., measure time from app bootstrap to first meaningful render and log it in development builds) to validate improvements over time.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "demora demasiado en cargar la pagina, hace que demore menos"
+        ]
+      },
+      "acceptanceCriteria": [
+        "In development, startup timing metrics are logged in the console with clear labels.",
+        "Instrumentation does not affect production behavior beyond negligible overhead.",
+        "Metrics make it possible to compare before/after improvements for initial render time."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (compose existing Shadcn components instead).",
-    "Do not edit any frontend immutable paths listed in SYSTEM_CONTEXT (e.g., useInternetIdentity/useActor/main.tsx).",
-    "Keep the backend architecture unchanged (single Motoko actor); this fix should be frontend-only unless proven otherwise."
+    "Do not edit files under frontend/src/hooks/useInternetIdentity.ts or frontend/src/hooks/useActor.ts (immutable paths).",
+    "Keep the backend as a single Motoko actor; do not introduce additional backend services or external databases."
   ],
   "nonGoals": [
-    "Adding new filter fields beyond minimum level, maximum level, and zone.",
-    "Changing app navigation, authentication, or backend discovery logic.",
-    "Translating existing Spanish UI strings to English (only the build request text must be in English)."
+    "Implementing real-time updates via WebSockets or push notifications.",
+    "Changing product features or adding new functionality unrelated to load performance.",
+    "Backend schema changes or data migrations unless strictly required for performance (not requested)."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

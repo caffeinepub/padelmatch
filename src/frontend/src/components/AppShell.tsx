@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { Home, MessageCircle, User, Settings } from 'lucide-react';
 import DiscoverScreen from '../screens/DiscoverScreen';
-import MatchesScreen from '../screens/MatchesScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import ChatScreen from '../screens/ChatScreen';
-import MatchProfileScreen from '../screens/MatchProfileScreen';
+import InlineScreenFallback from './InlineScreenFallback';
 import { Principal } from '@dfinity/principal';
 import { useMessageNotifications } from '../hooks/useMessageNotifications';
 import { Badge } from '@/components/ui/badge';
+
+// Lazy load non-initial screens for code-splitting
+const MatchesScreen = lazy(() => import('../screens/MatchesScreen'));
+const ProfileScreen = lazy(() => import('../screens/ProfileScreen'));
+const SettingsScreen = lazy(() => import('../screens/SettingsScreen'));
+const ChatScreen = lazy(() => import('../screens/ChatScreen'));
+const MatchProfileScreen = lazy(() => import('../screens/MatchProfileScreen'));
 
 type Screen = 'discover' | 'matches' | 'profile' | 'settings' | 'chat' | 'matchProfile';
 
@@ -17,8 +20,29 @@ export default function AppShell() {
   const [chatRecipient, setChatRecipient] = useState<Principal | null>(null);
   const [matchProfileUser, setMatchProfileUser] = useState<Principal | null>(null);
   const [previousScreen, setPreviousScreen] = useState<Screen>('matches');
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
-  const { unreadCount, markAsRead } = useMessageNotifications(currentScreen, chatRecipient);
+  // Defer notification polling until after first render
+  useEffect(() => {
+    // Use requestIdleCallback if available, otherwise setTimeout
+    const enableNotifications = () => {
+      setNotificationsEnabled(true);
+    };
+
+    if ('requestIdleCallback' in window) {
+      const handle = requestIdleCallback(enableNotifications, { timeout: 2000 });
+      return () => cancelIdleCallback(handle);
+    } else {
+      const timer = setTimeout(enableNotifications, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const { unreadCount, markAsRead } = useMessageNotifications(
+    currentScreen,
+    chatRecipient,
+    notificationsEnabled
+  );
 
   const openChat = (recipientId: Principal) => {
     // Mark this thread as read before opening
@@ -55,28 +79,30 @@ export default function AppShell() {
     <div className="flex h-screen flex-col bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-emerald-950 dark:to-blue-950">
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-20">
-        {currentScreen === 'discover' && <DiscoverScreen />}
-        {currentScreen === 'matches' && (
-          <MatchesScreen 
-            onOpenChat={openChat} 
-            onOpenProfile={(userId) => openMatchProfile(userId, 'matches')}
-          />
-        )}
-        {currentScreen === 'profile' && <ProfileScreen />}
-        {currentScreen === 'settings' && <SettingsScreen />}
-        {currentScreen === 'chat' && chatRecipient && (
-          <ChatScreen 
-            recipientId={chatRecipient} 
-            onBack={closeChat}
-            onOpenProfile={(userId) => openMatchProfile(userId, 'chat')}
-          />
-        )}
-        {currentScreen === 'matchProfile' && matchProfileUser && (
-          <MatchProfileScreen 
-            userId={matchProfileUser} 
-            onBack={closeMatchProfile}
-          />
-        )}
+        <Suspense fallback={<InlineScreenFallback />}>
+          {currentScreen === 'discover' && <DiscoverScreen />}
+          {currentScreen === 'matches' && (
+            <MatchesScreen 
+              onOpenChat={openChat} 
+              onOpenProfile={(userId) => openMatchProfile(userId, 'matches')}
+            />
+          )}
+          {currentScreen === 'profile' && <ProfileScreen />}
+          {currentScreen === 'settings' && <SettingsScreen />}
+          {currentScreen === 'chat' && chatRecipient && (
+            <ChatScreen 
+              recipientId={chatRecipient} 
+              onBack={closeChat}
+              onOpenProfile={(userId) => openMatchProfile(userId, 'chat')}
+            />
+          )}
+          {currentScreen === 'matchProfile' && matchProfileUser && (
+            <MatchProfileScreen 
+              userId={matchProfileUser} 
+              onBack={closeMatchProfile}
+            />
+          )}
+        </Suspense>
       </main>
 
       {/* Bottom Navigation */}

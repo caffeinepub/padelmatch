@@ -4,37 +4,60 @@
   "summary": "New project",
   "architectural_notes": [],
   "known_issues": [
-    "Tapping the FILTROS (Filters) button causes the screen to go blank (white screen) instead of opening the filter panel."
+    "Page takes too long to load (performance issue)."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-fix-the-runtime-crash-that-causes-a-blank-white-screen-when-the-user-taps-the-filtros-button-in-the-discover-screen-so-the-filters-sheet-opens-reliably-and-renders-the-filter-controls",
-      "title": "Fix the runtime crash that causes a blank/white screen when the user taps the \"FILTROS\" button in the Discover screen, so the filters sheet opens reliably and renders the filter controls.",
+      "id": "feature-reduce-perceived-initial-load-time-by-avoiding-a-full-screen-blocking-spinner-whenever-possible-keep-the-app-shell-responsive-while-data-loads-and-only-block-when-absolutely-required-to-prevent-incorrect-navigation-e-g-deciding-between-profile-setup-vs-main-app",
+      "title": "Reduce perceived initial load time by avoiding a full-screen blocking spinner whenever possible; keep the app shell responsive while data loads, and only block when absolutely required to prevent incorrect navigation (e.g., deciding between Profile Setup vs Main App).",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-the-discover-filters-ui-implementation-to-ensure-shadcn-select-components-use-stable-string-values-and-not-candid-idl-enum-variant-objects-for-their-value-selectitem-value-props-while-still-producing-a-valid-filters-object-for-usediscovercandidates-filters",
-      "title": "Update the Discover filters UI implementation to ensure Shadcn Select components use stable string values (and not candid/IDL enum/variant objects) for their `value` / `SelectItem value` props, while still producing a valid `Filters` object for `useDiscoverCandidates(filters)`.",
+      "id": "feature-implement-route-screen-code-splitting-for-non-initial-screens-to-reduce-initial-js-bundle-size-e-g-lazy-load-matches-profile-settings-chat-and-match-profile-screens-and-show-a-lightweight-fallback-while-chunks-load",
+      "title": "Implement route/screen code-splitting for non-initial screens to reduce initial JS bundle size (e.g., lazy-load Matches, Profile, Settings, Chat, and Match Profile screens) and show a lightweight fallback while chunks load.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-a-minimal-user-safe-failure-mode-for-the-discover-filters-panel-rendering-if-the-filters-ui-throws-during-render-show-a-small-inline-error-state-inside-the-sheet-instead-of-blanking-the-entire-app-view",
-      "title": "Add a minimal, user-safe failure mode for the Discover filters panel rendering: if the filters UI throws during render, show a small inline error state inside the sheet instead of blanking the entire app view.",
+      "id": "feature-tune-react-query-defaults-and-key-queries-for-faster-startup-and-fewer-unnecessary-refetches-e-g-set-sensible-staletime-refetchonwindowfocus-refetchonmount-defaults-apply-conservative-retries-delays-while-preserving-correctness",
+      "title": "Tune React Query defaults and key queries for faster startup and fewer unnecessary refetches (e.g., set sensible staleTime/refetchOnWindowFocus/refetchOnMount defaults; apply conservative retries/delays) while preserving correctness.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-defer-heavy-background-work-that-is-not-required-for-first-render-e-g-message-notification-polling-initialization-until-after-the-main-screen-is-visible-so-it-does-not-compete-with-first-load-rendering-network-requests",
+      "title": "Defer heavy background work that is not required for first render (e.g., message notification polling initialization) until after the main screen is visible, so it does not compete with first-load rendering/network requests.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-lightweight-developer-visible-performance-instrumentation-for-startup-e-g-measure-time-from-app-bootstrap-to-first-meaningful-render-and-log-it-in-development-builds-to-validate-improvements-over-time",
+      "title": "Add lightweight, developer-visible performance instrumentation for startup (e.g., measure time from app bootstrap to first meaningful render and log it in development builds) to validate improvements over time.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
     }
   ],
-  "new_feature_requests": [],
-  "projectName": "Fix white screen crash when tapping the Discover 'FILTROS' button",
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Improve page load performance (reduce time to load page)",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Reduce initial page load time and perceived latency",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

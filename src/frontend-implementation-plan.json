@@ -1,77 +1,115 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix Discover filters sheet white-screen crash (stable Select values + safe fallback)",
+  "title": "Frontend performance improvements: faster startup, code-splitting, and deferred background work",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Prevent the Discover screen from crashing/blanking when opening the FILTROS sheet and ensure the filter controls render reliably.",
+      "summary": "Keep the app shell responsive during startup by replacing full-screen blocking loaders with lightweight, non-blocking UI while identity/profile state resolves (only blocking when required to route correctly).",
       "acceptanceCriteria": [
-        "From the Discover screen, tapping the \"FILTROS\" button opens the sheet and the app does not render a blank/white screen.",
-        "No uncaught exceptions are thrown when opening the sheet (check browser console).",
-        "The sheet renders the three filter controls (minimum level, maximum level, zone) without errors."
+        "When opening the app on a normal connection, the UI shows an interactive shell (or lightweight skeleton) quickly instead of a long full-screen loader.",
+        "The app still correctly routes authenticated users without profiles to the profile setup flow once the profile query resolves.",
+        "No white-screen or blank-screen state occurs during the transition from loading to loaded states."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/DiscoverFilters.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Update the filters panel to provide Shadcn Select components stable string `value` / `SelectItem value` props (instead of passing potentially non-string Level runtime shapes). Use the existing shadcn/ui Select components via composition only (do not edit files under frontend/src/components/ui). Verify the component's usage instructions before implementing."
+          "description": "Refactor startup gating to avoid the full-screen blocking spinner: render a lightweight responsive shell/skeleton immediately during initialization, and only gate navigation when the profile routing decision is unresolved (authenticated + profile unknown). Ensure transitions between Login/ProfileSetup/AppShell never produce a blank/white screen."
         },
         {
-          "path": "frontend/src/screens/DiscoverScreen.tsx",
-          "operation": "modify",
-          "description": "Refactor Discover screen filter state so the Sheet opens reliably and the filters panel receives safe props. Ensure the derived Filters object passed into `useDiscoverCandidates(filters)` remains valid while the UI uses stable string keys for Select values. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/utils/discoverFilterMappings.ts",
+          "path": "frontend/src/components/StartupShell.tsx",
           "operation": "create",
-          "description": "Add small mapping/helpers to convert between unknown/IDL-shaped Level values and stable string keys (e.g., levelToKey/keyToLevel), so Select values are always strings while producing a correct `Filters` object for discovery queries."
+          "description": "Add a small, lightweight startup shell/skeleton component used by App.tsx to keep the UI responsive while identity/profile checks resolve. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Ensure Discover filter Selects use stable string values while still producing a valid `Filters` object for `useDiscoverCandidates(filters)` and reflecting selections correctly.",
+      "summary": "Add screen-level code-splitting by lazy-loading non-initial screens and showing an inline fallback while chunks load.",
       "acceptanceCriteria": [
-        "Opening the filters sheet does not crash even if `Level` is represented as a non-string candid/IDL type at runtime.",
-        "Selecting \"Minimum level\" and \"Maximum level\" updates the Discover screen results (query refresh) without errors.",
-        "All Selects show the currently selected value correctly after changes and after closing/reopening the sheet."
+        "Initial bundle work is reduced by lazy-loading screens not needed on first paint.",
+        "Navigating to a lazy-loaded screen shows a small inline loading fallback (not a full-screen blank state) until the screen module is loaded.",
+        "All navigation paths continue to work (Discover, Matches, Profile, Settings, Chat, Match Profile)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/utils/discoverFilterMappings.ts",
+          "path": "frontend/src/components/AppShell.tsx",
           "operation": "modify",
-          "description": "Implement robust parsing/coercion for Level values so it can accept runtime shapes (string, enum-like, or object) and consistently return a stable string key; also provide conversion back to the typed `Level` for the backend `Filters` payload."
+          "description": "Implement React.lazy/Suspense-based code-splitting for non-initial screens (Matches, Profile, Settings, Chat, Match Profile). Keep Discover eagerly loaded for first paint. Wrap screen rendering with an inline fallback to avoid blank states during chunk loading."
         },
         {
-          "path": "frontend/src/components/DiscoverFilters.tsx",
-          "operation": "modify",
-          "description": "Change props to accept stable string keys for `levelMin`/`levelMax` (and keep `zone` as string), wiring `onValueChange` to emit keys. Keep the three controls (minimum level, maximum level, zone) and ensure Select shows the current selection after open/close cycles. Use existing shadcn/ui Select components (compose only). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/screens/DiscoverScreen.tsx",
-          "operation": "modify",
-          "description": "Maintain UI filter state as string keys and derive a typed `Filters` object (using mapping helpers) for `useDiscoverCandidates(filters)`. Ensure changes to min/max levels trigger a query refresh and do not throw, even if existing filter values originated from non-string runtime representations."
+          "path": "frontend/src/components/InlineScreenFallback.tsx",
+          "operation": "create",
+          "description": "Create a small inline fallback component (e.g., compact spinner/skeleton row) to display inside AppShell while lazy-loaded screen chunks download. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Add a minimal, user-safe failure mode so a render error in the filters panel shows an inline error in the sheet instead of blanking the app.",
+      "summary": "Tune React Query defaults and key queries to reduce unnecessary startup refetches while preserving correctness.",
       "acceptanceCriteria": [
-        "If an error occurs while rendering the filters panel, the rest of the Discover screen remains visible and interactive.",
-        "The sheet content shows an inline error message and a way to close the sheet (so the user can recover without refresh)."
+        "On a reload, the app issues fewer immediate network requests that are not required for the first screen to render.",
+        "Queries do not aggressively refetch on window focus during normal use unless the data is likely stale.",
+        "No regressions: profile, discover candidates, matches, and chat still load and update as expected."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/InlineSheetErrorBoundary.tsx",
-          "operation": "create",
-          "description": "Create a small React error boundary component intended for Sheet content that catches render errors and renders an inline, user-safe error state (message + retry/close actions via callbacks) without taking down the rest of the app."
+          "path": "frontend/src/main.tsx",
+          "operation": "modify",
+          "description": "Configure QueryClient with tuned defaultOptions (sensible staleTime, refetchOnWindowFocus false, refetchOnMount false/conditional, conservative retry/retryDelay, and appropriate gcTime) to reduce unnecessary startup work while keeping correctness."
         },
         {
-          "path": "frontend/src/screens/DiscoverScreen.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Wrap the `DiscoverFilters` render inside the new inline Sheet error boundary. Control Sheet open state (e.g., via local state and `onOpenChange`) so the error fallback can close the sheet and let the user recover without a full refresh. Use existing shadcn/ui Sheet/Button components via composition only. Verify the component's usage instructions before implementing."
+          "description": "Adjust key queries to align with the new React Query defaults and startup needs (e.g., apply per-query staleTime for profile/matches/discover where safe; ensure retries/delays are conservative; avoid refetch patterns that trigger extra network requests on initial render). Do not change authentication hooks."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Defer non-critical background polling/notification work until after the main UI becomes visible so it doesn’t compete with first-load rendering and initial data fetches.",
+      "acceptanceCriteria": [
+        "On first load into the authenticated app, non-critical polling/background tasks start after the initial UI becomes visible.",
+        "Unread message indicators and notifications still function after the deferred start.",
+        "No increase in error logs related to deferred initialization."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/AppShell.tsx",
+          "operation": "modify",
+          "description": "Defer enabling message notification polling until after the app shell has visibly rendered (e.g., enable via post-mount effect / idle callback). Pass an explicit flag to the notifications hook so startup rendering is not blocked by polling setup."
+        },
+        {
+          "path": "frontend/src/hooks/useMessageNotifications.ts",
+          "operation": "modify",
+          "description": "Add an enable/defer mechanism so polling initialization can be started after first render (and stopped/cleaned up reliably). Ensure unread counts/toasts still update once enabled and that no additional errors occur due to delayed start."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Add lightweight, developer-visible startup performance instrumentation (development only) to measure and compare time-to-first-meaningful-render over time.",
+      "acceptanceCriteria": [
+        "In development, startup timing metrics are logged in the console with clear labels.",
+        "Instrumentation does not affect production behavior beyond negligible overhead.",
+        "Metrics make it possible to compare before/after improvements for initial render time."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/startupPerf.ts",
+          "operation": "create",
+          "description": "Implement a small dev-only instrumentation utility that marks app bootstrap and measures time to first meaningful render using the Performance API (or a similar low-overhead approach)."
+        },
+        {
+          "path": "frontend/src/main.tsx",
+          "operation": "modify",
+          "description": "Add a bootstrap timing mark at app startup (development only) using the new startupPerf utility."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Record/log the first meaningful render timing in development (e.g., once LoginScreen, ProfileSetupScreen, or AppShell is first committed) via the startupPerf utility; ensure no production behavior change beyond negligible overhead."
         }
       ]
     }

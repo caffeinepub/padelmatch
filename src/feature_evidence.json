@@ -2,12 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-fix-the-runtime-crash-that-causes-a-blank-white-screen-when-the-user-taps-the-filtros-button-in-the-discover-screen-so-the-filters-sheet-opens-reliably-and-renders-the-filter-controls",
-      "featureTitle": "Fix the runtime crash that causes a blank/white screen when the user taps the \"FILTROS\" button in the Discover screen, so the filters sheet opens reliably and renders the filter controls.",
+      "featureId": "feature-reduce-perceived-initial-load-time-by-avoiding-a-full-screen-blocking-spinner-whenever-possible-keep-the-app-shell-responsive-while-data-loads-and-only-block-when-absolutely-required-to-prevent-incorrect-navigation-e-g-deciding-between-profile-setup-vs-main-app",
+      "featureTitle": "Reduce perceived initial load time by avoiding a full-screen blocking spinner whenever possible; keep the app shell responsive while data loads, and only block when absolutely required to prevent incorrect navigation (e.g., deciding between Profile Setup vs Main App).",
       "files": [
-        "frontend/src/components/DiscoverFilters.tsx",
-        "frontend/src/screens/DiscoverScreen.tsx",
-        "frontend/src/utils/discoverFilterMappings.ts"
+        "frontend/src/App.tsx",
+        "frontend/src/components/StartupShell.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -24,12 +23,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-discover-filters-ui-implementation-to-ensure-shadcn-select-components-use-stable-string-values-and-not-candid-idl-enum-variant-objects-for-their-value-selectitem-value-props-while-still-producing-a-valid-filters-object-for-usediscovercandidates-filters",
-      "featureTitle": "Update the Discover filters UI implementation to ensure Shadcn Select components use stable string values (and not candid/IDL enum/variant objects) for their `value` / `SelectItem value` props, while still producing a valid `Filters` object for `useDiscoverCandidates(filters)`.",
+      "featureId": "feature-implement-route-screen-code-splitting-for-non-initial-screens-to-reduce-initial-js-bundle-size-e-g-lazy-load-matches-profile-settings-chat-and-match-profile-screens-and-show-a-lightweight-fallback-while-chunks-load",
+      "featureTitle": "Implement route/screen code-splitting for non-initial screens to reduce initial JS bundle size (e.g., lazy-load Matches, Profile, Settings, Chat, and Match Profile screens) and show a lightweight fallback while chunks load.",
       "files": [
-        "frontend/src/components/DiscoverFilters.tsx",
-        "frontend/src/screens/DiscoverScreen.tsx",
-        "frontend/src/utils/discoverFilterMappings.ts"
+        "frontend/src/components/AppShell.tsx",
+        "frontend/src/components/InlineScreenFallback.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -46,11 +44,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-minimal-user-safe-failure-mode-for-the-discover-filters-panel-rendering-if-the-filters-ui-throws-during-render-show-a-small-inline-error-state-inside-the-sheet-instead-of-blanking-the-entire-app-view",
-      "featureTitle": "Add a minimal, user-safe failure mode for the Discover filters panel rendering: if the filters UI throws during render, show a small inline error state inside the sheet instead of blanking the entire app view.",
+      "featureId": "feature-tune-react-query-defaults-and-key-queries-for-faster-startup-and-fewer-unnecessary-refetches-e-g-set-sensible-staletime-refetchonwindowfocus-refetchonmount-defaults-apply-conservative-retries-delays-while-preserving-correctness",
+      "featureTitle": "Tune React Query defaults and key queries for faster startup and fewer unnecessary refetches (e.g., set sensible staleTime/refetchOnWindowFocus/refetchOnMount defaults; apply conservative retries/delays) while preserving correctness.",
       "files": [
-        "frontend/src/components/InlineSheetErrorBoundary.tsx",
-        "frontend/src/screens/DiscoverScreen.tsx"
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -63,6 +60,48 @@
       ],
       "testIds": [
         "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-defer-heavy-background-work-that-is-not-required-for-first-render-e-g-message-notification-polling-initialization-until-after-the-main-screen-is-visible-so-it-does-not-compete-with-first-load-rendering-network-requests",
+      "featureTitle": "Defer heavy background work that is not required for first render (e.g., message notification polling initialization) until after the main screen is visible, so it does not compete with first-load rendering/network requests.",
+      "files": [
+        "frontend/src/components/AppShell.tsx",
+        "frontend/src/hooks/useMessageNotifications.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-lightweight-developer-visible-performance-instrumentation-for-startup-e-g-measure-time-from-app-bootstrap-to-first-meaningful-render-and-log-it-in-development-builds-to-validate-improvements-over-time",
+      "featureTitle": "Add lightweight, developer-visible performance instrumentation for startup (e.g., measure time from app bootstrap to first meaningful render and log it in development builds) to validate improvements over time.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/utils/startupPerf.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
       ],
       "confidence": "high"
     }

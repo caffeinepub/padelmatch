@@ -14,7 +14,8 @@ function createMessageKey(msg: ChatMessage): string {
 
 export function useMessageNotifications(
   currentScreen: string,
-  chatRecipient: Principal | null
+  chatRecipient: Principal | null,
+  enabled: boolean = true
 ) {
   const { actor, isFetching: actorFetching } = useActor();
   const { identity } = useInternetIdentity();
@@ -84,113 +85,112 @@ export function useMessageNotifications(
     
     messagesToRemove.forEach(key => newSeenMessages.delete(key));
     seenMessagesRef.current = newSeenMessages;
-
-    // Update unread counts
+    
+    // Update unread count for this sender
     const newUnreadBySender = new Map(unreadBySender);
     newUnreadBySender.delete(senderStr);
     setUnreadBySender(newUnreadBySender);
-
+    
     // Recalculate total
     let total = 0;
     newUnreadBySender.forEach(count => total += count);
     setUnreadCount(total);
-
-    // Save to localStorage
-    const state = loadUnreadState(principal);
-    state.unreadMessageKeys = newSeenMessages;
-    state.unreadBySender = newUnreadBySender;
-    saveUnreadState(principal, state);
+    
+    // Persist to localStorage
+    saveUnreadState(principal, {
+      lastPolledTimestamp: lastPolledRef.current.toString(),
+      unreadMessageKeys: seenMessagesRef.current,
+      unreadBySender: newUnreadBySender,
+    });
   }, [identity, unreadBySender]);
 
-  // Polling function
-  const pollForNewMessages = useCallback(async () => {
-    if (!actor || actorFetching || !identity) return;
+  // Poll for new messages
+  const pollMessages = useCallback(async () => {
+    if (!actor || !identity || !enabled) return;
 
     try {
-      const since = lastPolledRef.current;
-      const newMessages: ChatMessage[] = await actor.fetchNewMessagesSince(since);
+      const newMessages = await actor.fetchNewMessagesSince(lastPolledRef.current);
       
       if (newMessages.length === 0) return;
 
       const principal = identity.getPrincipal();
       const currentChatRecipientStr = chatRecipient?.toString();
       const newUnreadBySender = new Map(unreadBySender);
-      let hasNewUnread = false;
-
+      
       for (const msg of newMessages) {
-        const messageKey = createMessageKey(msg);
-        
-        // Skip if already seen
-        if (seenMessagesRef.current.has(messageKey)) continue;
-        
-        // Mark as seen
-        seenMessagesRef.current.add(messageKey);
-        
+        const msgKey = createMessageKey(msg);
         const senderStr = msg.sender.toString();
         
-        // Skip if this message is from the currently open chat
+        // Skip if already seen
+        if (seenMessagesRef.current.has(msgKey)) continue;
+        
+        // Add to seen messages
+        seenMessagesRef.current.add(msgKey);
+        
+        // Skip notification if currently chatting with this sender
         if (currentScreen === 'chat' && currentChatRecipientStr === senderStr) {
           continue;
         }
-
+        
         // Increment unread count for this sender
         const currentCount = newUnreadBySender.get(senderStr) || 0;
         newUnreadBySender.set(senderStr, currentCount + 1);
-        hasNewUnread = true;
-
+        
         // Show toast notification
         const senderName = await fetchSenderName(msg.sender);
-        toast(`New message from ${senderName}`, {
+        toast.info(`Nuevo mensaje de ${senderName}`, {
           description: msg.content.length > 50 ? msg.content.substring(0, 50) + '...' : msg.content,
         });
       }
-
-      // Update last polled timestamp to the latest message timestamp
-      const latestTimestamp = newMessages.reduce(
-        (max, msg) => msg.timestamp > max ? msg.timestamp : max,
-        lastPolledRef.current
-      );
+      
+      // Update state
+      setUnreadBySender(newUnreadBySender);
+      
+      // Calculate total unread
+      let total = 0;
+      newUnreadBySender.forEach(count => total += count);
+      setUnreadCount(total);
+      
+      // Update last polled timestamp
+      const latestTimestamp = newMessages[newMessages.length - 1].timestamp;
       lastPolledRef.current = latestTimestamp;
-
-      if (hasNewUnread) {
-        setUnreadBySender(newUnreadBySender);
-        
-        // Calculate total unread
-        let total = 0;
-        newUnreadBySender.forEach(count => total += count);
-        setUnreadCount(total);
-
-        // Save to localStorage
-        const state = loadUnreadState(principal);
-        state.lastPolledTimestamp = latestTimestamp.toString();
-        state.unreadMessageKeys = seenMessagesRef.current;
-        state.unreadBySender = newUnreadBySender;
-        saveUnreadState(principal, state);
-      }
+      
+      // Persist to localStorage
+      saveUnreadState(principal, {
+        lastPolledTimestamp: latestTimestamp.toString(),
+        unreadMessageKeys: seenMessagesRef.current,
+        unreadBySender: newUnreadBySender,
+      });
+      
     } catch (error) {
-      console.error('Error polling for new messages:', error);
+      console.error('Error polling messages:', error);
     }
-  }, [actor, actorFetching, identity, chatRecipient, currentScreen, unreadBySender, fetchSenderName]);
+  }, [actor, identity, currentScreen, chatRecipient, unreadBySender, fetchSenderName, enabled]);
 
-  // Start/stop polling
+  // Start/stop polling based on enabled flag
   useEffect(() => {
-    if (!actor || actorFetching || !identity) {
+    if (!enabled || !actor || actorFetching || !identity) {
+      // Clear interval if disabled or not ready
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
       return;
     }
 
-    // Start polling
-    intervalRef.current = setInterval(pollForNewMessages, POLL_INTERVAL);
-
     // Initial poll
-    pollForNewMessages();
-
+    pollMessages();
+    
+    // Set up interval
+    intervalRef.current = setInterval(pollMessages, POLL_INTERVAL);
+    
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };
-  }, [actor, actorFetching, identity, pollForNewMessages]);
+  }, [enabled, actor, actorFetching, identity, pollMessages]);
 
   return {
     unreadCount,

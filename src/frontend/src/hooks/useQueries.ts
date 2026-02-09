@@ -17,6 +17,8 @@ export function useGetCallerUserProfile() {
     },
     enabled: !!actor && !actorFetching,
     retry: false,
+    staleTime: 60000, // Profile is fresh for 1 minute
+    refetchOnMount: true, // Always check profile on mount for auth routing
   });
 
   return {
@@ -38,6 +40,7 @@ export function useGetUserProfile(userId: Principal | null) {
     enabled: !!actor && !actorFetching && !!userId,
     retry: 1,
     retryDelay: 1000,
+    staleTime: 120000, // Other user profiles fresh for 2 minutes
   });
 }
 
@@ -141,6 +144,7 @@ export function useDiscoverCandidates(filters: Filters) {
       return actor.discoverCandidates(filters);
     },
     enabled: !!actor && !actorFetching,
+    staleTime: 60000, // Candidates fresh for 1 minute
   });
 }
 
@@ -177,6 +181,7 @@ export function useGetMatches() {
       return actor.getMatches();
     },
     enabled: !!actor && !actorFetching,
+    staleTime: 120000, // Matches fresh for 2 minutes
   });
 }
 
@@ -213,6 +218,7 @@ export function useGetChat(recipientId: Principal | null) {
     refetchInterval: 3000, // Poll every 3 seconds
     retry: 1,
     retryDelay: 1000,
+    staleTime: 0, // Chat messages always refetch (real-time)
   });
 }
 
