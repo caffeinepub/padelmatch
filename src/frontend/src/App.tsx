@@ -1,13 +1,10 @@
-import { Suspense, useEffect } from 'react';
 import { useInternetIdentity } from './hooks/useInternetIdentity';
 import { useGetCallerUserProfile } from './hooks/useQueries';
 import LoginScreen from './screens/LoginScreen';
 import ProfileSetupScreen from './screens/ProfileSetupScreen';
 import AppShell from './components/AppShell';
-import StartupShell from './components/StartupShell';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from 'next-themes';
-import { startupPerf } from './utils/startupPerf';
 
 export default function App() {
   const { identity, isInitializing } = useInternetIdentity();
@@ -15,29 +12,16 @@ export default function App() {
 
   const isAuthenticated = !!identity;
 
-  // Log first meaningful render timing
-  useEffect(() => {
-    if (!isInitializing) {
-      startupPerf.mark('identity-resolved');
-    }
-    
-    if (isAuthenticated && isFetched) {
-      startupPerf.mark('profile-resolved');
-    }
-    
-    if (!isInitializing && (!isAuthenticated || (isAuthenticated && isFetched))) {
-      startupPerf.mark('first-meaningful-render');
-      startupPerf.measure('time-to-interactive', 'app-bootstrap', 'first-meaningful-render');
-      startupPerf.logReport();
-    }
-  }, [isInitializing, isAuthenticated, isFetched]);
-
-  // Show lightweight startup shell only during critical initialization
-  // (identity check or authenticated profile routing decision)
-  if (isInitializing || (isAuthenticated && !isFetched)) {
+  // Show loading during initialization
+  if (isInitializing || (isAuthenticated && profileLoading)) {
     return (
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        <StartupShell />
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Cargando...</p>
+          </div>
+        </div>
       </ThemeProvider>
     );
   }
@@ -66,9 +50,7 @@ export default function App() {
   // Authenticated with profile - show main app
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      <Suspense fallback={<StartupShell />}>
-        <AppShell />
-      </Suspense>
+      <AppShell />
       <Toaster />
     </ThemeProvider>
   );

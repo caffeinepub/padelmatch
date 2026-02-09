@@ -1,45 +1,45 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T22:44:32.969Z",
-  "summary": "Most performance-focused requirements are implemented: a lightweight startup shell replaces a blocking spinner during critical auth/profile gating; non-initial screens are lazy-loaded with an inline fallback; message notification polling is deferred; and dev-only startup performance instrumentation is added. React Query is tuned at least for key queries, but the diff does not clearly show global React Query default option tuning (e.g., QueryClient defaultOptions). Some unrelated product/UI/branding changes are described in frontend-file-summaries.txt without being requested.",
+  "generatedAt": "2026-02-09T23:20:44.934Z",
+  "summary": "Diff implements three independent filter controls (min category, max category, zone) in DiscoverFilters, adds a reusable Uruguay departments list, and stores/persists the three selections in DiscoverScreen state. Potential mismatch: the visible option labels/default text are in Spanish rather than the explicitly specified English strings (“1st…7th”, “All departments”).",
   "missing_requirements": [
     {
-      "id": "REQ-3",
-      "requirement": "Tune React Query defaults (e.g., staleTime/refetchOnWindowFocus/refetchOnMount defaults; conservative retries/delays) for faster startup and fewer unnecessary refetches while preserving correctness.",
-      "reason": "The diff shows per-query tuning for at least the profile queries (staleTime/retry/refetchOnMount), but it does not provide evidence of setting global React Query defaults (e.g., QueryClient defaultOptions) as explicitly requested.",
+      "id": "REQ-1",
+      "requirement": "Minimum category and Maximum category each offer exactly 7 options labeled “1st, 2nd, 3rd, 4th, 5th, 6th, 7th”.",
+      "reason": "The diff shows 7 options, but their labels are “1era, 2da, 3era, 4ta, 5ta, 6ta, 7ma” rather than the explicitly specified “1st…7th”.",
       "evidence": [
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/App.tsx"
+        "frontend/src/utils/discoverFilterMappings.ts",
+        "frontend/src/components/DiscoverFilters.tsx"
+      ]
+    },
+    {
+      "id": "REQ-1",
+      "requirement": "Zone includes an “All departments” option.",
+      "reason": "The diff includes an all-departments option, but it is defined/displayed as “Todos los departamentos” instead of the explicitly specified “All departments”.",
+      "evidence": [
+        "frontend/src/utils/uruguayDepartments.ts",
+        "frontend/src/components/DiscoverFilters.tsx",
+        "frontend/src/screens/DiscoverScreen.tsx"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Login screen branding/layout changes and UTM tracking link attribution (\"PlayPal\" branding, two vertically-stacked buttons, dynamic year footer, UTM tracking for caffeine.ai attribution link).",
-      "reason": "Not requested by the BuildRequest (non-goal: no product feature changes unrelated to load performance). These items appear as described changes in the summary file, but are unrelated to the performance requirements.",
+      "description": "Resetting the Discover card index and passed-users set when any filter selection changes.",
+      "reason": "The BuildRequest only asked to store/persist the filter selections and update UI; resetting card navigation state on filter change was not requested.",
       "evidence": [
-        "frontend-file-summaries.txt"
-      ]
-    },
-    {
-      "description": "PWA/iOS meta tag additions and broader design/theme overhauls (emerald/blue sports theme tokens, global OKLCH color system, Tailwind palette extensions).",
-      "reason": "Not requested by the BuildRequest and unrelated to initial load performance requirements; mentioned in the summary file.",
-      "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend/src/screens/DiscoverScreen.tsx"
       ]
     }
   ],
   "confidence": 0.66,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/App.tsx",
-    "frontend/src/components/AppShell.tsx",
-    "frontend/src/components/InlineScreenFallback.tsx",
-    "frontend/src/components/StartupShell.tsx",
-    "frontend/src/hooks/useMessageNotifications.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/utils/startupPerf.ts",
+    "frontend/src/components/DiscoverFilters.tsx",
+    "frontend/src/screens/DiscoverScreen.tsx",
+    "frontend/src/utils/discoverFilterMappings.ts",
+    "frontend/src/utils/uruguayDepartments.ts",
     "project_state.json"
   ]
 }

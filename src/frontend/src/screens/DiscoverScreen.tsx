@@ -1,33 +1,23 @@
 import { useState, useEffect } from 'react';
-import { useDiscoverCandidates, useLikeUser } from '../hooks/useQueries';
-import { Level } from '../backend';
+import { useDiscoverCandidates } from '../hooks/useQueries';
+import { Filters } from '../backend';
 import DiscoverCard from '../components/DiscoverCard';
 import DiscoverFilters from '../components/DiscoverFilters';
-import InlineSheetErrorBoundary from '../components/InlineSheetErrorBoundary';
 import { Button } from '@/components/ui/button';
 import { SlidersHorizontal, X, Heart } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { levelToKey, keyToLevel, LevelKey } from '../utils/discoverFilterMappings';
+import { ALL_DEPARTMENTS } from '../utils/uruguayDepartments';
 
 export default function DiscoverScreen() {
-  // UI state uses stable string keys
-  const [levelMinKey, setLevelMinKey] = useState<LevelKey>('1');
-  const [levelMaxKey, setLevelMaxKey] = useState<LevelKey>('5');
-  const [zone, setZone] = useState('');
+  const [minCategory, setMinCategory] = useState<string>('1');
+  const [maxCategory, setMaxCategory] = useState<string>('7');
+  const [zone, setZone] = useState<string>(ALL_DEPARTMENTS);
   const [sheetOpen, setSheetOpen] = useState(false);
-  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [passedUsers, setPassedUsers] = useState<Set<string>>(new Set());
 
-  // Derive typed Filters object for backend query
-  const filters = {
-    levelMin: keyToLevel(levelMinKey),
-    levelMax: keyToLevel(levelMaxKey),
-    zone,
-  };
-
-  const { data: candidates = [], isLoading } = useDiscoverCandidates(filters);
-  const likeUser = useLikeUser();
+  // For now, we still pass the old Filters enum to the backend (no server-side filtering changes)
+  const { data: candidates = [], isLoading } = useDiscoverCandidates(Filters.level);
 
   // Filter out passed users
   const availableCandidates = candidates.filter(
@@ -38,7 +28,7 @@ export default function DiscoverScreen() {
 
   const handleLike = () => {
     if (!currentCandidate) return;
-    likeUser.mutate(currentCandidate.id);
+    // In Draft 13, there's no backend like functionality, just move to next
     setCurrentIndex((prev) => prev + 1);
   };
 
@@ -52,7 +42,7 @@ export default function DiscoverScreen() {
   useEffect(() => {
     setCurrentIndex(0);
     setPassedUsers(new Set());
-  }, [levelMinKey, levelMaxKey, zone]);
+  }, [minCategory, maxCategory, zone]);
 
   return (
     <div className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
@@ -81,16 +71,14 @@ export default function DiscoverScreen() {
             <SheetHeader>
               <SheetTitle>Filtros</SheetTitle>
             </SheetHeader>
-            <InlineSheetErrorBoundary onClose={() => setSheetOpen(false)}>
-              <DiscoverFilters
-                levelMin={levelMinKey}
-                levelMax={levelMaxKey}
-                zone={zone}
-                onLevelMinChange={setLevelMinKey}
-                onLevelMaxChange={setLevelMaxKey}
-                onZoneChange={setZone}
-              />
-            </InlineSheetErrorBoundary>
+            <DiscoverFilters
+              minCategory={minCategory}
+              maxCategory={maxCategory}
+              zone={zone}
+              onMinCategoryChange={setMinCategory}
+              onMaxCategoryChange={setMaxCategory}
+              onZoneChange={setZone}
+            />
           </SheetContent>
         </Sheet>
       </div>
@@ -122,7 +110,6 @@ export default function DiscoverScreen() {
                 size="lg"
                 variant="outline"
                 className="h-16 w-16 rounded-full border-2 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950"
-                disabled={likeUser.isPending}
               >
                 <X className="h-8 w-8 text-red-500" />
               </Button>
@@ -131,7 +118,6 @@ export default function DiscoverScreen() {
                 onClick={handleLike}
                 size="lg"
                 className="h-16 w-16 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600"
-                disabled={likeUser.isPending}
               >
                 <Heart className="h-8 w-8 text-white" />
               </Button>

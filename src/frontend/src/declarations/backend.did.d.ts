@@ -10,28 +10,14 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface ChatMessage {
-  'content' : string,
-  'recipient' : Principal,
-  'sender' : Principal,
-  'timestamp' : Time,
-}
 export type ExternalBlob = Uint8Array;
-export interface Filters {
-  'levelMax' : Level,
-  'levelMin' : Level,
-  'zone' : string,
-}
+export type Filters = { 'zone' : null } |
+  { 'level' : null };
 export type Level = { 'one' : null } |
   { 'two' : null } |
   { 'three' : null } |
   { 'five' : null } |
   { 'four' : null };
-export interface Match {
-  'createdAt' : Time,
-  'user1' : Principal,
-  'user2' : Principal,
-}
 export type Position = { 'drive' : null } |
   { 'reves' : null };
 export interface Profile {
@@ -39,9 +25,9 @@ export interface Profile {
   'age' : bigint,
   'bio' : string,
   'name' : string,
-  'createdAt' : Time,
   'wins' : bigint,
   'zone' : Zone,
+  'created_at' : Time,
   'level' : Level,
   'availability' : Array<string>,
   'matchesPlayed' : bigint,
@@ -87,17 +73,11 @@ export interface _SERVICE {
     undefined
   >,
   'discoverCandidates' : ActorMethod<[Filters], Array<Profile>>,
-  'fetchNewMessagesSince' : ActorMethod<[Time], Array<ChatMessage>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [Profile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getChat' : ActorMethod<[Principal], Array<ChatMessage>>,
-  'getMatches' : ActorMethod<[], Array<Match>>,
-  'getOwnProfile' : ActorMethod<[], Profile>,
   'getUserProfile' : ActorMethod<[Principal], [] | [Profile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
-  'likeUser' : ActorMethod<[Principal], boolean>,
   'saveCallerUserProfile' : ActorMethod<[Profile], undefined>,
-  'sendMessage' : ActorMethod<[Principal, string], undefined>,
   'updateProfile' : ActorMethod<
     [string, bigint, Level, Position, Zone, Array<string>, string],
     undefined

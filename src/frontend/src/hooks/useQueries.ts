@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { Profile, Match, ChatMessage, Filters, Level, Position, Zone } from '../backend';
-import { ExternalBlob } from '../backend';
-import { Principal } from '@dfinity/principal';
+import type { Profile, Level, Position, Zone } from '../backend';
+import { ExternalBlob, Filters } from '../backend';
 import { toast } from 'sonner';
 
 // Profile queries
@@ -17,8 +16,6 @@ export function useGetCallerUserProfile() {
     },
     enabled: !!actor && !actorFetching,
     retry: false,
-    staleTime: 60000, // Profile is fresh for 1 minute
-    refetchOnMount: true, // Always check profile on mount for auth routing
   });
 
   return {
@@ -26,22 +23,6 @@ export function useGetCallerUserProfile() {
     isLoading: actorFetching || query.isLoading,
     isFetched: !!actor && query.isFetched,
   };
-}
-
-export function useGetUserProfile(userId: Principal | null) {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery<Profile | null>({
-    queryKey: ['userProfile', userId?.toString()],
-    queryFn: async () => {
-      if (!actor || !userId) return null;
-      return actor.getUserProfile(userId);
-    },
-    enabled: !!actor && !actorFetching && !!userId,
-    retry: 1,
-    retryDelay: 1000,
-    staleTime: 120000, // Other user profiles fresh for 2 minutes
-  });
 }
 
 export function useCreateProfile() {
@@ -144,98 +125,5 @@ export function useDiscoverCandidates(filters: Filters) {
       return actor.discoverCandidates(filters);
     },
     enabled: !!actor && !actorFetching,
-    staleTime: 60000, // Candidates fresh for 1 minute
-  });
-}
-
-export function useLikeUser() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (targetId: Principal) => {
-      if (!actor) throw new Error('Actor no disponible');
-      return actor.likeUser(targetId);
-    },
-    onSuccess: (isMatch: boolean) => {
-      if (isMatch) {
-        toast.success('¡Es un match! 🎉');
-        queryClient.invalidateQueries({ queryKey: ['matches'] });
-      }
-      queryClient.invalidateQueries({ queryKey: ['discoverCandidates'] });
-    },
-    onError: (error: Error) => {
-      toast.error('Error: ' + error.message);
-    },
-  });
-}
-
-// Matches queries
-export function useGetMatches() {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery<Match[]>({
-    queryKey: ['matches'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getMatches();
-    },
-    enabled: !!actor && !actorFetching,
-    staleTime: 120000, // Matches fresh for 2 minutes
-  });
-}
-
-// Chat queries
-export function useGetChat(recipientId: Principal | null) {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery<ChatMessage[]>({
-    queryKey: ['chat', recipientId?.toString()],
-    queryFn: async () => {
-      if (!actor || !recipientId) return [];
-      const messages = await actor.getChat(recipientId);
-      
-      // Sort messages by timestamp ascending (chronological order)
-      // Add deterministic tie-breakers for messages with identical timestamps
-      return messages.sort((a, b) => {
-        // Primary sort: timestamp ascending
-        const timestampDiff = Number(a.timestamp - b.timestamp);
-        if (timestampDiff !== 0) return timestampDiff;
-        
-        // Tie-breaker 1: content comparison
-        const contentCompare = a.content.localeCompare(b.content);
-        if (contentCompare !== 0) return contentCompare;
-        
-        // Tie-breaker 2: sender principal
-        const senderCompare = a.sender.toString().localeCompare(b.sender.toString());
-        if (senderCompare !== 0) return senderCompare;
-        
-        // Tie-breaker 3: recipient principal
-        return a.recipient.toString().localeCompare(b.recipient.toString());
-      });
-    },
-    enabled: !!actor && !actorFetching && !!recipientId,
-    refetchInterval: 3000, // Poll every 3 seconds
-    retry: 1,
-    retryDelay: 1000,
-    staleTime: 0, // Chat messages always refetch (real-time)
-  });
-}
-
-export function useSendMessage() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (data: { recipientId: Principal; content: string }) => {
-      if (!actor) throw new Error('Actor no disponible');
-      await actor.sendMessage(data.recipientId, data.content);
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['chat', variables.recipientId.toString()] });
-    },
-    onError: (error: Error) => {
-      toast.error('Error al enviar mensaje: ' + error.message);
-    },
   });
 }

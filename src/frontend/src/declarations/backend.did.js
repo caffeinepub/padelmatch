@@ -33,11 +33,7 @@ export const Level = IDL.Variant({
 });
 export const Position = IDL.Variant({ 'drive' : IDL.Null, 'reves' : IDL.Null });
 export const Zone = IDL.Text;
-export const Filters = IDL.Record({
-  'levelMax' : Level,
-  'levelMin' : Level,
-  'zone' : IDL.Text,
-});
+export const Filters = IDL.Variant({ 'zone' : IDL.Null, 'level' : IDL.Null });
 export const Time = IDL.Int;
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const Profile = IDL.Record({
@@ -45,25 +41,14 @@ export const Profile = IDL.Record({
   'age' : IDL.Nat,
   'bio' : IDL.Text,
   'name' : IDL.Text,
-  'createdAt' : Time,
   'wins' : IDL.Nat,
   'zone' : Zone,
+  'created_at' : Time,
   'level' : Level,
   'availability' : IDL.Vec(IDL.Text),
   'matchesPlayed' : IDL.Nat,
   'photo' : IDL.Opt(ExternalBlob),
   'position' : Position,
-});
-export const ChatMessage = IDL.Record({
-  'content' : IDL.Text,
-  'recipient' : IDL.Principal,
-  'sender' : IDL.Principal,
-  'timestamp' : Time,
-});
-export const Match = IDL.Record({
-  'createdAt' : Time,
-  'user1' : IDL.Principal,
-  'user2' : IDL.Principal,
 });
 
 export const idlService = IDL.Service({
@@ -101,17 +86,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'discoverCandidates' : IDL.Func([Filters], [IDL.Vec(Profile)], ['query']),
-  'fetchNewMessagesSince' : IDL.Func([Time], [IDL.Vec(ChatMessage)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(Profile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getChat' : IDL.Func([IDL.Principal], [IDL.Vec(ChatMessage)], ['query']),
-  'getMatches' : IDL.Func([], [IDL.Vec(Match)], ['query']),
-  'getOwnProfile' : IDL.Func([], [Profile], ['query']),
   'getUserProfile' : IDL.Func([IDL.Principal], [IDL.Opt(Profile)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-  'likeUser' : IDL.Func([IDL.Principal], [IDL.Bool], []),
   'saveCallerUserProfile' : IDL.Func([Profile], [], []),
-  'sendMessage' : IDL.Func([IDL.Principal, IDL.Text], [], []),
   'updateProfile' : IDL.Func(
       [IDL.Text, IDL.Nat, Level, Position, Zone, IDL.Vec(IDL.Text), IDL.Text],
       [],
@@ -148,11 +127,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const Position = IDL.Variant({ 'drive' : IDL.Null, 'reves' : IDL.Null });
   const Zone = IDL.Text;
-  const Filters = IDL.Record({
-    'levelMax' : Level,
-    'levelMin' : Level,
-    'zone' : IDL.Text,
-  });
+  const Filters = IDL.Variant({ 'zone' : IDL.Null, 'level' : IDL.Null });
   const Time = IDL.Int;
   const ExternalBlob = IDL.Vec(IDL.Nat8);
   const Profile = IDL.Record({
@@ -160,25 +135,14 @@ export const idlFactory = ({ IDL }) => {
     'age' : IDL.Nat,
     'bio' : IDL.Text,
     'name' : IDL.Text,
-    'createdAt' : Time,
     'wins' : IDL.Nat,
     'zone' : Zone,
+    'created_at' : Time,
     'level' : Level,
     'availability' : IDL.Vec(IDL.Text),
     'matchesPlayed' : IDL.Nat,
     'photo' : IDL.Opt(ExternalBlob),
     'position' : Position,
-  });
-  const ChatMessage = IDL.Record({
-    'content' : IDL.Text,
-    'recipient' : IDL.Principal,
-    'sender' : IDL.Principal,
-    'timestamp' : Time,
-  });
-  const Match = IDL.Record({
-    'createdAt' : Time,
-    'user1' : IDL.Principal,
-    'user2' : IDL.Principal,
   });
   
   return IDL.Service({
@@ -216,21 +180,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'discoverCandidates' : IDL.Func([Filters], [IDL.Vec(Profile)], ['query']),
-    'fetchNewMessagesSince' : IDL.Func(
-        [Time],
-        [IDL.Vec(ChatMessage)],
-        ['query'],
-      ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(Profile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getChat' : IDL.Func([IDL.Principal], [IDL.Vec(ChatMessage)], ['query']),
-    'getMatches' : IDL.Func([], [IDL.Vec(Match)], ['query']),
-    'getOwnProfile' : IDL.Func([], [Profile], ['query']),
     'getUserProfile' : IDL.Func([IDL.Principal], [IDL.Opt(Profile)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'likeUser' : IDL.Func([IDL.Principal], [IDL.Bool], []),
     'saveCallerUserProfile' : IDL.Func([Profile], [], []),
-    'sendMessage' : IDL.Func([IDL.Principal, IDL.Text], [], []),
     'updateProfile' : IDL.Func(
         [IDL.Text, IDL.Nat, Level, Position, Zone, IDL.Vec(IDL.Text), IDL.Text],
         [],

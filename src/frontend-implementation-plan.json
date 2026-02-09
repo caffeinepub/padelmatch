@@ -1,115 +1,66 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Frontend performance improvements: faster startup, code-splitting, and deferred background work",
+  "title": "Update Discover Filters sheet with min/max category and Uruguay department zone",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Keep the app shell responsive during startup by replacing full-screen blocking loaders with lightweight, non-blocking UI while identity/profile state resolves (only blocking when required to route correctly).",
+      "summary": "Replace the existing single “Filtrar por” selector in the Discover filters sheet with three inputs: Minimum category (1st–7th), Maximum category (1st–7th), and Zone (All departments + Uruguay departments).",
       "acceptanceCriteria": [
-        "When opening the app on a normal connection, the UI shows an interactive shell (or lightweight skeleton) quickly instead of a long full-screen loader.",
-        "The app still correctly routes authenticated users without profiles to the profile setup flow once the profile query resolves.",
-        "No white-screen or blank-screen state occurs during the transition from loading to loaded states."
+        "Opening the Filters sheet shows three controls (Minimum category, Maximum category, Zone) in the same location where the existing “Filtrar por” selector currently appears.",
+        "Minimum category and Maximum category each offer exactly 7 options (1st, 2nd, 3rd, 4th, 5th, 6th, 7th).",
+        "Zone offers “All departments” plus the full set of Uruguay departments (no missing entries)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/components/DiscoverFilters.tsx",
           "operation": "modify",
-          "description": "Refactor startup gating to avoid the full-screen blocking spinner: render a lightweight responsive shell/skeleton immediately during initialization, and only gate navigation when the profile routing decision is unresolved (authenticated + profile unknown). Ensure transitions between Login/ProfileSetup/AppShell never produce a blank/white screen."
+          "description": "Replace the current single shadcn/ui Select control (“Filtrar por”) with three controls in the same area: Minimum category Select (1st–7th), Maximum category Select (1st–7th), and Zone Select (defaulting to “All departments” plus Uruguay departments). Use the shadcn-ui Select/Label components for consistent UI. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/components/StartupShell.tsx",
-          "operation": "create",
-          "description": "Add a small, lightweight startup shell/skeleton component used by App.tsx to keep the UI responsive while identity/profile checks resolve. Verify the component's usage instructions before implementing."
+          "path": "frontend/src/utils/discoverFilterMappings.ts",
+          "operation": "modify",
+          "description": "Define and export the category option list for 1st through 7th (exactly 7 options) to keep DiscoverFilters rendering consistent and reusable."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Add screen-level code-splitting by lazy-loading non-initial screens and showing an inline fallback while chunks load.",
+      "summary": "Create a reusable explicit list of Uruguay departments and render them as selectable Zone options with “All departments” as default.",
       "acceptanceCriteria": [
-        "Initial bundle work is reduced by lazy-loading screens not needed on first paint.",
-        "Navigating to a lazy-loaded screen shows a small inline loading fallback (not a full-screen blank state) until the screen module is loaded.",
-        "All navigation paths continue to work (Discover, Matches, Profile, Settings, Chat, Match Profile)."
+        "The Zone dropdown contains these 19 departments: Artigas, Canelones, Cerro Largo, Colonia, Durazno, Flores, Florida, Lavalleja, Maldonado, Montevideo, Paysandú, Río Negro, Rivera, Rocha, Salto, San José, Soriano, Tacuarembó, Treinta y Tres.",
+        "The default Zone selection is “All departments”."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/AppShell.tsx",
-          "operation": "modify",
-          "description": "Implement React.lazy/Suspense-based code-splitting for non-initial screens (Matches, Profile, Settings, Chat, Match Profile). Keep Discover eagerly loaded for first paint. Wrap screen rendering with an inline fallback to avoid blank states during chunk loading."
+          "path": "frontend/src/utils/uruguayDepartments.ts",
+          "operation": "create",
+          "description": "Add and export a single source-of-truth array containing the 19 Uruguay departments (exact spellings from acceptance criteria) for reuse by the Discover Zone dropdown."
         },
         {
-          "path": "frontend/src/components/InlineScreenFallback.tsx",
-          "operation": "create",
-          "description": "Create a small inline fallback component (e.g., compact spinner/skeleton row) to display inside AppShell while lazy-loaded screen chunks download. Verify the component's usage instructions before implementing."
+          "path": "frontend/src/components/DiscoverFilters.tsx",
+          "operation": "modify",
+          "description": "Import and use the reusable Uruguay departments list to render the Zone Select options, ensuring “All departments” is present and used as the default selection. Use shadcn-ui Select components. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Tune React Query defaults and key queries to reduce unnecessary startup refetches while preserving correctness.",
+      "summary": "Persist the three filter selections in DiscoverScreen state and pass them to DiscoverFilters so selections remain when closing/reopening the sheet and can be changed independently.",
       "acceptanceCriteria": [
-        "On a reload, the app issues fewer immediate network requests that are not required for the first screen to render.",
-        "Queries do not aggressively refetch on window focus during normal use unless the data is likely stale.",
-        "No regressions: profile, discover candidates, matches, and chat still load and update as expected."
+        "Changing any of the three filter controls updates Discover screen state and the selected values remain visible when the sheet is closed and reopened.",
+        "Minimum category, Maximum category, and Zone can be set independently without UI breakage."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/main.tsx",
+          "path": "frontend/src/screens/DiscoverScreen.tsx",
           "operation": "modify",
-          "description": "Configure QueryClient with tuned defaultOptions (sensible staleTime, refetchOnWindowFocus false, refetchOnMount false/conditional, conservative retry/retryDelay, and appropriate gcTime) to reduce unnecessary startup work while keeping correctness."
+          "description": "Replace the single `filters` state with three independent pieces of state: `minCategory`, `maxCategory`, and `zone` (default zone: “All departments”). Pass these values and dedicated change handlers down to DiscoverFilters so the sheet can be closed/reopened without losing selections, and so each control updates independently. Keep candidate discovery fetching behavior unchanged (no server-side filtering changes in this task)."
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/components/DiscoverFilters.tsx",
           "operation": "modify",
-          "description": "Adjust key queries to align with the new React Query defaults and startup needs (e.g., apply per-query staleTime for profile/matches/discover where safe; ensure retries/delays are conservative; avoid refetch patterns that trigger extra network requests on initial render). Do not change authentication hooks."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Defer non-critical background polling/notification work until after the main UI becomes visible so it doesn’t compete with first-load rendering and initial data fetches.",
-      "acceptanceCriteria": [
-        "On first load into the authenticated app, non-critical polling/background tasks start after the initial UI becomes visible.",
-        "Unread message indicators and notifications still function after the deferred start.",
-        "No increase in error logs related to deferred initialization."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/AppShell.tsx",
-          "operation": "modify",
-          "description": "Defer enabling message notification polling until after the app shell has visibly rendered (e.g., enable via post-mount effect / idle callback). Pass an explicit flag to the notifications hook so startup rendering is not blocked by polling setup."
-        },
-        {
-          "path": "frontend/src/hooks/useMessageNotifications.ts",
-          "operation": "modify",
-          "description": "Add an enable/defer mechanism so polling initialization can be started after first render (and stopped/cleaned up reliably). Ensure unread counts/toasts still update once enabled and that no additional errors occur due to delayed start."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Add lightweight, developer-visible startup performance instrumentation (development only) to measure and compare time-to-first-meaningful-render over time.",
-      "acceptanceCriteria": [
-        "In development, startup timing metrics are logged in the console with clear labels.",
-        "Instrumentation does not affect production behavior beyond negligible overhead.",
-        "Metrics make it possible to compare before/after improvements for initial render time."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/utils/startupPerf.ts",
-          "operation": "create",
-          "description": "Implement a small dev-only instrumentation utility that marks app bootstrap and measures time to first meaningful render using the Performance API (or a similar low-overhead approach)."
-        },
-        {
-          "path": "frontend/src/main.tsx",
-          "operation": "modify",
-          "description": "Add a bootstrap timing mark at app startup (development only) using the new startupPerf utility."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Record/log the first meaningful render timing in development (e.g., once LoginScreen, ProfileSetupScreen, or AppShell is first committed) via the startupPerf utility; ensure no production behavior change beyond negligible overhead."
+          "description": "Update DiscoverFilters props to accept `minCategory`, `maxCategory`, and `zone` plus corresponding onChange callbacks, and bind the three Select controls to those props so the visible selections reflect DiscoverScreen state. Use shadcn-ui Select/Label components. Verify the component's usage instructions before implementing."
         }
       ]
     }

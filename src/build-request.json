@@ -1,120 +1,69 @@
 {
   "kind": "build_request",
-  "title": "Reduce initial page load time and perceived latency",
+  "title": "Update Discover Filters sheet to show min/max category and Uruguay department zone",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Reduce perceived initial load time by avoiding a full-screen blocking spinner whenever possible; keep the app shell responsive while data loads, and only block when absolutely required to prevent incorrect navigation (e.g., deciding between Profile Setup vs Main App).",
+      "text": "Replace the current single filter selector in the Discover filters sheet (the area that currently shows the “Filtrar por” label and dropdown) with three inputs shown in that same spot: (1) “Minimum category” with options 1st through 7th, (2) “Maximum category” with options 1st through 7th, and (3) “Zone” with an “All departments” option plus all Uruguay departments.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "demora demasiado en cargar la pagina, hace que demore menos"
+          "quiero que cuando el usuario toque filtros, en el mismo lugar en el que ahora aparece filtrar por, aparezca Categoria minima (de 1era a 7ma), Categoria maxima (de 1era a 7ma) y Zona (todos los departamentos de Uruguay"
         ]
       },
       "acceptanceCriteria": [
-        "When opening the app on a normal connection, the UI shows an interactive shell (or lightweight skeleton) quickly instead of a long full-screen loader.",
-        "The app still correctly routes authenticated users without profiles to the profile setup flow once the profile query resolves.",
-        "No white-screen or blank-screen state occurs during the transition from loading to loaded states."
+        "Opening the Filters sheet shows three controls (Minimum category, Maximum category, Zone) in the same location where the existing “Filtrar por” selector currently appears.",
+        "Minimum category and Maximum category each offer exactly 7 options (1st, 2nd, 3rd, 4th, 5th, 6th, 7th).",
+        "Zone offers “All departments” plus the full set of Uruguay departments (no missing entries)."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Implement route/screen code-splitting for non-initial screens to reduce initial JS bundle size (e.g., lazy-load Matches, Profile, Settings, Chat, and Match Profile screens) and show a lightweight fallback while chunks load.",
+      "text": "Add a reusable, explicit list of Uruguay departments for the Zone dropdown and ensure the dropdown renders them as selectable options (keeping “All departments” as the default).",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "demora demasiado en cargar la pagina, hace que demore menos"
+          "Zona (todos los departamentos de Uruguay"
         ]
       },
       "acceptanceCriteria": [
-        "Initial bundle work is reduced by lazy-loading screens not needed on first paint.",
-        "Navigating to a lazy-loaded screen shows a small inline loading fallback (not a full-screen blank state) until the screen module is loaded.",
-        "All navigation paths continue to work (Discover, Matches, Profile, Settings, Chat, Match Profile)."
+        "The Zone dropdown contains these 19 departments: Artigas, Canelones, Cerro Largo, Colonia, Durazno, Flores, Florida, Lavalleja, Maldonado, Montevideo, Paysandú, Río Negro, Rivera, Rocha, Salto, San José, Soriano, Tacuarembó, Treinta y Tres.",
+        "The default Zone selection is “All departments”."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Tune React Query defaults and key queries for faster startup and fewer unnecessary refetches (e.g., set sensible staleTime/refetchOnWindowFocus/refetchOnMount defaults; apply conservative retries/delays) while preserving correctness.",
+      "text": "Store the three filter selections in Discover screen state and pass them to the DiscoverFilters component so selections persist while opening/closing the sheet and can be changed independently.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
-        ],
-        "quotes": [
-          "demora demasiado en cargar la pagina, hace que demore menos"
         ]
       },
       "acceptanceCriteria": [
-        "On a reload, the app issues fewer immediate network requests that are not required for the first screen to render.",
-        "Queries do not aggressively refetch on window focus during normal use unless the data is likely stale.",
-        "No regressions: profile, discover candidates, matches, and chat still load and update as expected."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Defer heavy background work that is not required for first render (e.g., message notification polling initialization) until after the main screen is visible, so it does not compete with first-load rendering/network requests.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "demora demasiado en cargar la pagina, hace que demore menos"
-        ]
-      },
-      "acceptanceCriteria": [
-        "On first load into the authenticated app, non-critical polling/background tasks start after the initial UI becomes visible.",
-        "Unread message indicators and notifications still function after the deferred start.",
-        "No increase in error logs related to deferred initialization."
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Add lightweight, developer-visible performance instrumentation for startup (e.g., measure time from app bootstrap to first meaningful render and log it in development builds) to validate improvements over time.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "demora demasiado en cargar la pagina, hace que demore menos"
-        ]
-      },
-      "acceptanceCriteria": [
-        "In development, startup timing metrics are logged in the console with clear labels.",
-        "Instrumentation does not affect production behavior beyond negligible overhead.",
-        "Metrics make it possible to compare before/after improvements for initial render time."
+        "Changing any of the three filter controls updates Discover screen state and the selected values remain visible when the sheet is closed and reopened.",
+        "Minimum category, Maximum category, and Zone can be set independently without UI breakage."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/hooks/useInternetIdentity.ts or frontend/src/hooks/useActor.ts (immutable paths).",
-    "Keep the backend as a single Motoko actor; do not introduce additional backend services or external databases."
+    "Do not edit files under frontend/src/components/ui or any other paths listed as immutable in SYSTEM_CONTEXT.",
+    "Keep the backend single-actor architecture; do not introduce new backend services."
   ],
   "nonGoals": [
-    "Implementing real-time updates via WebSockets or push notifications.",
-    "Changing product features or adding new functionality unrelated to load performance.",
-    "Backend schema changes or data migrations unless strictly required for performance (not requested)."
+    "Implementing actual server-side filtering logic in discoverCandidates.",
+    "Changing the Profile schema (e.g., adding a new stored category field) or expanding the existing backend Level enum.",
+    "Adding localization/i18n; only the filter UI change is in scope."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

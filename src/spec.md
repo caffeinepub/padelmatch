@@ -1,13 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Reduce initial page load time and perceived latency by keeping the app responsive during startup and cutting unnecessary upfront work.
+**Goal:** Update the Discover Filters sheet UI to replace the single “Filtrar por” selector with separate Minimum category, Maximum category, and Zone controls (including all Uruguay departments), with selections persisting while the sheet is opened/closed.
 
 **Planned changes:**
-- Replace the long full-screen blocking spinner with a fast-rendering app shell and lightweight inline loading/skeleton states; only block navigation when required to decide between Profile Setup vs Main App.
-- Add route/screen code-splitting for non-initial screens (e.g., Matches, Profile, Settings, Chat, Match Profile) with small inline fallbacks while modules load.
-- Tune React Query defaults and key queries to reduce unnecessary startup refetches (e.g., sensible staleTime/refetchOnWindowFocus/refetchOnMount, conservative retries/delays) while preserving correctness.
-- Defer non-critical background work (e.g., notification/message polling initialization) until after the main UI is visible.
-- Add developer-only startup performance instrumentation that logs timings (bootstrap → first meaningful render) in development builds.
+- Replace the existing “Filtrar por” dropdown area in the Discover filters sheet with three inputs: Minimum category (1st–7th), Maximum category (1st–7th), and Zone (default “All departments” plus all Uruguay departments).
+- Add a reusable, explicit frontend list of Uruguay’s 19 departments and use it to populate the Zone dropdown options.
+- Store Minimum category, Maximum category, and Zone selections in Discover screen state and pass them into the DiscoverFilters component so values persist across sheet open/close and can be adjusted independently.
 
-**User-visible outcome:** The app shows a usable UI faster on startup with fewer blocking loaders, navigation remains correct (including profile setup routing), and subsequent screens load smoothly with lightweight inline loading while their code downloads.
+**User-visible outcome:** When opening Filters on Discover, the user can choose a minimum category, maximum category, and a zone (all Uruguay departments), and their selections remain set when closing and reopening the filters sheet.

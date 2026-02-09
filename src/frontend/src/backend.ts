@@ -94,17 +94,6 @@ export type Time = bigint;
 export interface _CaffeineStorageRefillInformation {
     proposed_top_up_amount?: bigint;
 }
-export interface Filters {
-    levelMax: Level;
-    levelMin: Level;
-    zone: string;
-}
-export interface ChatMessage {
-    content: string;
-    recipient: Principal;
-    sender: Principal;
-    timestamp: Time;
-}
 export interface _CaffeineStorageCreateCertificateResult {
     method: string;
     blob_hash: string;
@@ -114,23 +103,22 @@ export interface Profile {
     age: bigint;
     bio: string;
     name: string;
-    createdAt: Time;
     wins: bigint;
     zone: Zone;
+    created_at: Time;
     level: Level;
     availability: Array<string>;
     matchesPlayed: bigint;
     photo?: ExternalBlob;
     position: Position;
 }
-export interface Match {
-    createdAt: Time;
-    user1: Principal;
-    user2: Principal;
-}
 export interface _CaffeineStorageRefillResult {
     success?: boolean;
     topped_up_amount?: bigint;
+}
+export enum Filters {
+    zone = "zone",
+    level = "level"
 }
 export enum Level {
     one = "one",
@@ -158,18 +146,12 @@ export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createProfile(name: string, age: bigint, level: Level, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
-    discoverCandidates(filters: Filters): Promise<Array<Profile>>;
-    fetchNewMessagesSince(since: Time): Promise<Array<ChatMessage>>;
+    discoverCandidates(_filters: Filters): Promise<Array<Profile>>;
     getCallerUserProfile(): Promise<Profile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getChat(recipient: Principal): Promise<Array<ChatMessage>>;
-    getMatches(): Promise<Array<Match>>;
-    getOwnProfile(): Promise<Profile>;
     getUserProfile(user: Principal): Promise<Profile | null>;
     isCallerAdmin(): Promise<boolean>;
-    likeUser(target: Principal): Promise<boolean>;
     saveCallerUserProfile(profile: Profile): Promise<void>;
-    sendMessage(recipient: Principal, content: string): Promise<void>;
     updateProfile(name: string, age: bigint, level: Level, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
     uploadPhoto(photo: ExternalBlob): Promise<void>;
 }
@@ -316,20 +298,6 @@ export class Backend implements backendInterface {
             return from_candid_vec_n16(this._uploadFile, this._downloadFile, result);
         }
     }
-    async fetchNewMessagesSince(arg0: Time): Promise<Array<ChatMessage>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.fetchNewMessagesSince(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.fetchNewMessagesSince(arg0);
-            return result;
-        }
-    }
     async getCallerUserProfile(): Promise<Profile | null> {
         if (this.processError) {
             try {
@@ -356,48 +324,6 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getCallerUserRole();
             return from_candid_UserRole_n26(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getChat(arg0: Principal): Promise<Array<ChatMessage>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getChat(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getChat(arg0);
-            return result;
-        }
-    }
-    async getMatches(): Promise<Array<Match>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getMatches();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getMatches();
-            return result;
-        }
-    }
-    async getOwnProfile(): Promise<Profile> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getOwnProfile();
-                return from_candid_Profile_n17(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getOwnProfile();
-            return from_candid_Profile_n17(this._uploadFile, this._downloadFile, result);
         }
     }
     async getUserProfile(arg0: Principal): Promise<Profile | null> {
@@ -428,20 +354,6 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async likeUser(arg0: Principal): Promise<boolean> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.likeUser(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.likeUser(arg0);
-            return result;
-        }
-    }
     async saveCallerUserProfile(arg0: Profile): Promise<void> {
         if (this.processError) {
             try {
@@ -453,20 +365,6 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.saveCallerUserProfile(await to_candid_Profile_n28(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
-    async sendMessage(arg0: Principal, arg1: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.sendMessage(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.sendMessage(arg0, arg1);
             return result;
         }
     }
@@ -534,9 +432,9 @@ async function from_candid_record_n18(_uploadFile: (file: ExternalBlob) => Promi
     age: bigint;
     bio: string;
     name: string;
-    createdAt: _Time;
     wins: bigint;
     zone: _Zone;
+    created_at: _Time;
     level: _Level;
     availability: Array<string>;
     matchesPlayed: bigint;
@@ -547,9 +445,9 @@ async function from_candid_record_n18(_uploadFile: (file: ExternalBlob) => Promi
     age: bigint;
     bio: string;
     name: string;
-    createdAt: Time;
     wins: bigint;
     zone: Zone;
+    created_at: Time;
     level: Level;
     availability: Array<string>;
     matchesPlayed: bigint;
@@ -561,9 +459,9 @@ async function from_candid_record_n18(_uploadFile: (file: ExternalBlob) => Promi
         age: value.age,
         bio: value.bio,
         name: value.name,
-        createdAt: value.createdAt,
         wins: value.wins,
         zone: value.zone,
+        created_at: value.created_at,
         level: from_candid_Level_n19(_uploadFile, _downloadFile, value.level),
         availability: value.availability,
         matchesPlayed: value.matchesPlayed,
@@ -619,7 +517,7 @@ async function to_candid_ExternalBlob_n30(_uploadFile: (file: ExternalBlob) => P
     return await _uploadFile(value);
 }
 function to_candid_Filters_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Filters): _Filters {
-    return to_candid_record_n15(_uploadFile, _downloadFile, value);
+    return to_candid_variant_n15(_uploadFile, _downloadFile, value);
 }
 function to_candid_Level_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Level): _Level {
     return to_candid_variant_n11(_uploadFile, _downloadFile, value);
@@ -639,29 +537,14 @@ function to_candid__CaffeineStorageRefillInformation_n2(_uploadFile: (file: Exte
 function to_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CaffeineStorageRefillInformation | null): [] | [__CaffeineStorageRefillInformation] {
     return value === null ? candid_none() : candid_some(to_candid__CaffeineStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
 }
-function to_candid_record_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    levelMax: Level;
-    levelMin: Level;
-    zone: string;
-}): {
-    levelMax: _Level;
-    levelMin: _Level;
-    zone: string;
-} {
-    return {
-        levelMax: to_candid_Level_n10(_uploadFile, _downloadFile, value.levelMax),
-        levelMin: to_candid_Level_n10(_uploadFile, _downloadFile, value.levelMin),
-        zone: value.zone
-    };
-}
 async function to_candid_record_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: Principal;
     age: bigint;
     bio: string;
     name: string;
-    createdAt: Time;
     wins: bigint;
     zone: Zone;
+    created_at: Time;
     level: Level;
     availability: Array<string>;
     matchesPlayed: bigint;
@@ -672,9 +555,9 @@ async function to_candid_record_n29(_uploadFile: (file: ExternalBlob) => Promise
     age: bigint;
     bio: string;
     name: string;
-    createdAt: _Time;
     wins: bigint;
     zone: _Zone;
+    created_at: _Time;
     level: _Level;
     availability: Array<string>;
     matchesPlayed: bigint;
@@ -686,9 +569,9 @@ async function to_candid_record_n29(_uploadFile: (file: ExternalBlob) => Promise
         age: value.age,
         bio: value.bio,
         name: value.name,
-        createdAt: value.createdAt,
         wins: value.wins,
         zone: value.zone,
+        created_at: value.created_at,
         level: to_candid_Level_n10(_uploadFile, _downloadFile, value.level),
         availability: value.availability,
         matchesPlayed: value.matchesPlayed,
@@ -737,6 +620,17 @@ function to_candid_variant_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint
         drive: null
     } : value == Position.reves ? {
         reves: null
+    } : value;
+}
+function to_candid_variant_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Filters): {
+    zone: null;
+} | {
+    level: null;
+} {
+    return value == Filters.zone ? {
+        zone: null
+    } : value == Filters.level ? {
+        level: null
     } : value;
 }
 function to_candid_variant_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {

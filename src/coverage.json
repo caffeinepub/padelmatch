@@ -1,78 +1,52 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T22:44:32.972Z",
+  "generatedAt": "2026-02-09T23:20:44.937Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 5,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Reduce perceived initial load time by avoiding a full-screen blocking spinner whenever possible; keep the app shell responsive while data loads, and only block when absolutely required to prevent incorrect navigation (e.g., deciding between Profile Setup vs Main App).",
+        "summary": "Replace the current single filter selector in the Discover filters sheet (the area that currently shows the “Filtrar por” label and dropdown) with three inputs shown in that same spot: (1) “Minimum category” with options 1st through 7th, (2) “Maximum category” with options 1st through 7th, and (3) “Zone” with an “All departments” option plus all Uruguay departments.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/StartupShell.tsx"
+          "frontend/src/components/DiscoverFilters.tsx",
+          "frontend/src/utils/discoverFilterMappings.ts"
         ],
         "matchedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/StartupShell.tsx"
+          "frontend/src/components/DiscoverFilters.tsx",
+          "frontend/src/utils/discoverFilterMappings.ts"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Implement route/screen code-splitting for non-initial screens to reduce initial JS bundle size (e.g., lazy-load Matches, Profile, Settings, Chat, and Match Profile screens) and show a lightweight fallback while chunks load.",
+        "summary": "Add a reusable, explicit list of Uruguay departments for the Zone dropdown and ensure the dropdown renders them as selectable options (keeping “All departments” as the default).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/AppShell.tsx",
-          "frontend/src/components/InlineScreenFallback.tsx"
+          "frontend/src/utils/uruguayDepartments.ts",
+          "frontend/src/components/DiscoverFilters.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/AppShell.tsx",
-          "frontend/src/components/InlineScreenFallback.tsx"
+          "frontend/src/utils/uruguayDepartments.ts",
+          "frontend/src/components/DiscoverFilters.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Tune React Query defaults and key queries for faster startup and fewer unnecessary refetches (e.g., set sensible staleTime/refetchOnWindowFocus/refetchOnMount defaults; apply conservative retries/delays) while preserving correctness.",
+        "summary": "Store the three filter selections in Discover screen state and pass them to the DiscoverFilters component so selections persist while opening/closing the sheet and can be changed independently.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/main.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/screens/DiscoverScreen.tsx",
+          "frontend/src/components/DiscoverFilters.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Defer heavy background work that is not required for first render (e.g., message notification polling initialization) until after the main screen is visible, so it does not compete with first-load rendering/network requests.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/AppShell.tsx",
-          "frontend/src/hooks/useMessageNotifications.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/AppShell.tsx",
-          "frontend/src/hooks/useMessageNotifications.ts"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Add lightweight, developer-visible performance instrumentation for startup (e.g., measure time from app bootstrap to first meaningful render and log it in development builds) to validate improvements over time.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/utils/startupPerf.ts",
-          "frontend/src/main.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/utils/startupPerf.ts",
-          "frontend/src/App.tsx"
+          "frontend/src/screens/DiscoverScreen.tsx",
+          "frontend/src/components/DiscoverFilters.tsx"
         ]
       }
     ]
@@ -82,13 +56,10 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/components/AppShell.tsx",
-    "frontend/src/components/InlineScreenFallback.tsx",
-    "frontend/src/components/StartupShell.tsx",
-    "frontend/src/hooks/useMessageNotifications.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/utils/startupPerf.ts",
+    "frontend/src/components/DiscoverFilters.tsx",
+    "frontend/src/screens/DiscoverScreen.tsx",
+    "frontend/src/utils/discoverFilterMappings.ts",
+    "frontend/src/utils/uruguayDepartments.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
