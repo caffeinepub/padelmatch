@@ -1,51 +1,23 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T23:20:44.937Z",
+  "generatedAt": "2026-02-09T23:25:58.300Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Replace the current single filter selector in the Discover filters sheet (the area that currently shows the “Filtrar por” label and dropdown) with three inputs shown in that same spot: (1) “Minimum category” with options 1st through 7th, (2) “Maximum category” with options 1st through 7th, and (3) “Zone” with an “All departments” option plus all Uruguay departments.",
+        "summary": "Update the Zone select dropdown in `frontend/src/components/DiscoverFilters.tsx` so the departments list is vertically scrollable and all 19 Uruguay departments can be reached on typical mobile viewport sizes.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/DiscoverFilters.tsx",
-          "frontend/src/utils/discoverFilterMappings.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/DiscoverFilters.tsx",
-          "frontend/src/utils/discoverFilterMappings.ts"
-        ]
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Add a reusable, explicit list of Uruguay departments for the Zone dropdown and ensure the dropdown renders them as selectable options (keeping “All departments” as the default).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/utils/uruguayDepartments.ts",
           "frontend/src/components/DiscoverFilters.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/utils/uruguayDepartments.ts",
-          "frontend/src/components/DiscoverFilters.tsx"
-        ]
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Store the three filter selections in Discover screen state and pass them to the DiscoverFilters component so selections persist while opening/closing the sheet and can be changed independently.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/screens/DiscoverScreen.tsx",
-          "frontend/src/components/DiscoverFilters.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/screens/DiscoverScreen.tsx",
           "frontend/src/components/DiscoverFilters.tsx"
         ]
       }
@@ -57,9 +29,6 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/components/DiscoverFilters.tsx",
-    "frontend/src/screens/DiscoverScreen.tsx",
-    "frontend/src/utils/discoverFilterMappings.ts",
-    "frontend/src/utils/uruguayDepartments.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,11 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Update the Discover Filters sheet UI to replace the single “Filtrar por” selector with separate Minimum category, Maximum category, and Zone controls (including all Uruguay departments), with selections persisting while the sheet is opened/closed.
+**Goal:** Make the Zone (Uruguay departments) dropdown vertically scrollable so all 19 departments (plus the “All” option) are accessible on typical mobile screens.
 
 **Planned changes:**
-- Replace the existing “Filtrar por” dropdown area in the Discover filters sheet with three inputs: Minimum category (1st–7th), Maximum category (1st–7th), and Zone (default “All departments” plus all Uruguay departments).
-- Add a reusable, explicit frontend list of Uruguay’s 19 departments and use it to populate the Zone dropdown options.
-- Store Minimum category, Maximum category, and Zone selections in Discover screen state and pass them into the DiscoverFilters component so values persist across sheet open/close and can be adjusted independently.
+- Update the Zone select dropdown in `frontend/src/components/DiscoverFilters.tsx` to constrain the options list height and enable vertical scrolling when it exceeds available space.
+- Ensure scroll interaction works via mouse wheel/trackpad on desktop and touch scrolling on mobile without impacting the layout of the Minimum/Maximum Category selects in the same sheet.
 
-**User-visible outcome:** When opening Filters on Discover, the user can choose a minimum category, maximum category, and a zone (all Uruguay departments), and their selections remain set when closing and reopening the filters sheet.
+**User-visible outcome:** Users can open the Zone dropdown and scroll through the list to view and select any Uruguay department (and the “All” option) on both mobile and desktop.

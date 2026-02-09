@@ -6,7 +6,7 @@
   "frontend/src/components/AppShell.tsx": "Simplified app layout with only three screens (Discover, Profile, Settings) and bottom navigation, without chat or matches functionality.",
   "frontend/src/screens/DiscoverScreen.tsx": "Discover screen managing three independent filter state values (minCategory, maxCategory, zone) that persist when the filters sheet is closed/reopened, with candidate discovery still using the old Filters enum for backend compatibility.",
   "frontend/src/components/DiscoverCard.tsx": "Card component displaying user profile with photo, name, age, level stars, position, zone, bio, and stats in a modern sports design.",
-  "frontend/src/components/DiscoverFilters.tsx": "Filter UI component with three independent Select controls (minimum category, maximum category, zone) using shadcn-ui components and accepting separate props and change handlers for each filter.",
+  "frontend/src/components/DiscoverFilters.tsx": "Filter UI component with three independent Select controls (minimum category, maximum category, zone) using shadcn-ui components, with the Zone dropdown now scrollable via max-height constraint to accommodate all 19 Uruguay departments plus the \"All departments\" option.",
   "frontend/src/components/LevelStars.tsx": "Component that renders 1-5 stars based on user's padel skill level.",
   "frontend/src/components/UserAvatar.tsx": "Reusable avatar component that displays user photo from ExternalBlob or a placeholder icon.",
   "frontend/src/screens/MatchesScreen.tsx": "Match list view with separate interactive elements for opening profile (name button) and chat (message icon button), showing skeletons during load, inline error messages with retry, and graceful handling of unavailable profiles.",

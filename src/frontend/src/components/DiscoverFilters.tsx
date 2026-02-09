@@ -63,7 +63,7 @@ export default function DiscoverFilters({
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-[60vh] overflow-y-auto">
             <SelectItem value={ALL_DEPARTMENTS}>{ALL_DEPARTMENTS}</SelectItem>
             {URUGUAY_DEPARTMENTS.map((department) => (
               <SelectItem key={department} value={department}>

@@ -3,30 +3,16 @@
   "projectStateVersion": 3,
   "summary": "New project",
   "architectural_notes": [],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Only a subset of the 19 departments are currently visible; list is not scrollable"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-replace-the-current-single-filter-selector-in-the-discover-filters-sheet-the-area-that-currently-shows-the-filtrar-por-label-and-dropdown-with-three-inputs-shown-in-that-same-spot-1-minimum-category-with-options-1st-through-7th-2-maximum-category-with-options-1st-through-7th-and-3-zone-with-an-all-departments-option-plus-all-uruguay-departments",
-      "title": "Replace the current single filter selector in the Discover filters sheet (the area that currently shows the “Filtrar por” label and dropdown) with three inputs shown in that same spot: (1) “Minimum category” with options 1st through 7th, (2) “Maximum category” with options 1st through 7th, and (3) “Zone” with an “All departments” option plus all Uruguay departments.",
+      "id": "feature-update-the-zone-select-dropdown-in-frontend-src-components-discoverfilters-tsx-so-the-departments-list-is-vertically-scrollable-and-all-19-uruguay-departments-can-be-reached-on-typical-mobile-viewport-sizes",
+      "title": "Update the Zone select dropdown in `frontend/src/components/DiscoverFilters.tsx` so the departments list is vertically scrollable and all 19 Uruguay departments can be reached on typical mobile viewport sizes.",
       "reqIds": [
         "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-reusable-explicit-list-of-uruguay-departments-for-the-zone-dropdown-and-ensure-the-dropdown-renders-them-as-selectable-options-keeping-all-departments-as-the-default",
-      "title": "Add a reusable, explicit list of Uruguay departments for the Zone dropdown and ensure the dropdown renders them as selectable options (keeping “All departments” as the default).",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-store-the-three-filter-selections-in-discover-screen-state-and-pass-them-to-the-discoverfilters-component-so-selections-persist-while-opening-closing-the-sheet-and-can-be-changed-independently",
-      "title": "Store the three filter selections in Discover screen state and pass them to the DiscoverFilters component so selections persist while opening/closing the sheet and can be changed independently.",
-      "reqIds": [
-        "REQ-3"
       ],
       "version": 1
     }
@@ -34,12 +20,12 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Update Filtros UI: replace current 'Filtrar por' area with fields for Categoria mínima (1era–7ma), Categoria máxima (1era–7ma), and Zona (all departments of Uruguay).",
+      "summary": "Allow scrolling in the departments list so all 19 departments are visible",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Update Discover Filters sheet to show min/max category and Uruguay department zone",
+  "projectName": "Make the Zone (Uruguay departments) dropdown scrollable so all 19 departments are accessible",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

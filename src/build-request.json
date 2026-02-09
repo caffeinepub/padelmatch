@@ -1,66 +1,35 @@
 {
   "kind": "build_request",
-  "title": "Update Discover Filters sheet to show min/max category and Uruguay department zone",
+  "title": "Make the Zone (Uruguay departments) dropdown scrollable so all 19 departments are accessible",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Replace the current single filter selector in the Discover filters sheet (the area that currently shows the “Filtrar por” label and dropdown) with three inputs shown in that same spot: (1) “Minimum category” with options 1st through 7th, (2) “Maximum category” with options 1st through 7th, and (3) “Zone” with an “All departments” option plus all Uruguay departments.",
+      "text": "Update the Zone select dropdown in `frontend/src/components/DiscoverFilters.tsx` so the departments list is vertically scrollable and all 19 Uruguay departments can be reached on typical mobile viewport sizes.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "recent-1"
         ],
         "quotes": [
-          "quiero que cuando el usuario toque filtros, en el mismo lugar en el que ahora aparece filtrar por, aparezca Categoria minima (de 1era a 7ma), Categoria maxima (de 1era a 7ma) y Zona (todos los departamentos de Uruguay"
+          "npo se llegan a ver los 19 departamentos, necesito que se pueda scrollear para verlos todos"
         ]
       },
       "acceptanceCriteria": [
-        "Opening the Filters sheet shows three controls (Minimum category, Maximum category, Zone) in the same location where the existing “Filtrar por” selector currently appears.",
-        "Minimum category and Maximum category each offer exactly 7 options (1st, 2nd, 3rd, 4th, 5th, 6th, 7th).",
-        "Zone offers “All departments” plus the full set of Uruguay departments (no missing entries)."
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Add a reusable, explicit list of Uruguay departments for the Zone dropdown and ensure the dropdown renders them as selectable options (keeping “All departments” as the default).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "Zona (todos los departamentos de Uruguay"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The Zone dropdown contains these 19 departments: Artigas, Canelones, Cerro Largo, Colonia, Durazno, Flores, Florida, Lavalleja, Maldonado, Montevideo, Paysandú, Río Negro, Rivera, Rocha, Salto, San José, Soriano, Tacuarembó, Treinta y Tres.",
-        "The default Zone selection is “All departments”."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Store the three filter selections in Discover screen state and pass them to the DiscoverFilters component so selections persist while opening/closing the sheet and can be changed independently.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Changing any of the three filter controls updates Discover screen state and the selected values remain visible when the sheet is closed and reopened.",
-        "Minimum category, Maximum category, and Zone can be set independently without UI breakage."
+        "Opening the Zone dropdown shows a scrollable list when the options exceed the available vertical space.",
+        "All items in `URUGUAY_DEPARTMENTS` plus the `ALL_DEPARTMENTS` option can be reached via scrolling and selected.",
+        "Scrolling works with mouse wheel/trackpad on desktop and touch scrolling on mobile.",
+        "No layout regressions to the Minimum/Maximum Category selects in the same sheet."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui or any other paths listed as immutable in SYSTEM_CONTEXT.",
-    "Keep the backend single-actor architecture; do not introduce new backend services."
+    "Do not modify any files under `frontend/src/components/ui` (read-only UI components must be composed, not edited).",
+    "Keep the backend unchanged; this is a UI-only fix."
   ],
   "nonGoals": [
-    "Implementing actual server-side filtering logic in discoverCandidates.",
-    "Changing the Profile schema (e.g., adding a new stored category field) or expanding the existing backend Level enum.",
-    "Adding localization/i18n; only the filter UI change is in scope."
+    "Adding new departments or changing the department names/order in `frontend/src/utils/uruguayDepartments.ts`.",
+    "Implementing server-side filtering logic based on the selected Zone."
   ],
   "imageRequirements": {
     "required": [],

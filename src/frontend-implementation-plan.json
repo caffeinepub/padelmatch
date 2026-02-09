@@ -1,66 +1,22 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update Discover Filters sheet with min/max category and Uruguay department zone",
+  "title": "Make Zone (Uruguay departments) dropdown scrollable in Discover filters",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Replace the existing single “Filtrar por” selector in the Discover filters sheet with three inputs: Minimum category (1st–7th), Maximum category (1st–7th), and Zone (All departments + Uruguay departments).",
+      "summary": "Make the Zone select dropdown scrollable so all 19 Uruguay departments (plus the 'Todos los departamentos' option) are reachable on typical mobile viewports without affecting the other selects.",
       "acceptanceCriteria": [
-        "Opening the Filters sheet shows three controls (Minimum category, Maximum category, Zone) in the same location where the existing “Filtrar por” selector currently appears.",
-        "Minimum category and Maximum category each offer exactly 7 options (1st, 2nd, 3rd, 4th, 5th, 6th, 7th).",
-        "Zone offers “All departments” plus the full set of Uruguay departments (no missing entries)."
+        "Opening the Zone dropdown shows a scrollable list when the options exceed the available vertical space.",
+        "All items in `URUGUAY_DEPARTMENTS` plus the `ALL_DEPARTMENTS` option can be reached via scrolling and selected.",
+        "Scrolling works with mouse wheel/trackpad on desktop and touch scrolling on mobile.",
+        "No layout regressions to the Minimum/Maximum Category selects in the same sheet."
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/DiscoverFilters.tsx",
           "operation": "modify",
-          "description": "Replace the current single shadcn/ui Select control (“Filtrar por”) with three controls in the same area: Minimum category Select (1st–7th), Maximum category Select (1st–7th), and Zone Select (defaulting to “All departments” plus Uruguay departments). Use the shadcn-ui Select/Label components for consistent UI. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/utils/discoverFilterMappings.ts",
-          "operation": "modify",
-          "description": "Define and export the category option list for 1st through 7th (exactly 7 options) to keep DiscoverFilters rendering consistent and reusable."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Create a reusable explicit list of Uruguay departments and render them as selectable Zone options with “All departments” as default.",
-      "acceptanceCriteria": [
-        "The Zone dropdown contains these 19 departments: Artigas, Canelones, Cerro Largo, Colonia, Durazno, Flores, Florida, Lavalleja, Maldonado, Montevideo, Paysandú, Río Negro, Rivera, Rocha, Salto, San José, Soriano, Tacuarembó, Treinta y Tres.",
-        "The default Zone selection is “All departments”."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/utils/uruguayDepartments.ts",
-          "operation": "create",
-          "description": "Add and export a single source-of-truth array containing the 19 Uruguay departments (exact spellings from acceptance criteria) for reuse by the Discover Zone dropdown."
-        },
-        {
-          "path": "frontend/src/components/DiscoverFilters.tsx",
-          "operation": "modify",
-          "description": "Import and use the reusable Uruguay departments list to render the Zone Select options, ensuring “All departments” is present and used as the default selection. Use shadcn-ui Select components. Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Persist the three filter selections in DiscoverScreen state and pass them to DiscoverFilters so selections remain when closing/reopening the sheet and can be changed independently.",
-      "acceptanceCriteria": [
-        "Changing any of the three filter controls updates Discover screen state and the selected values remain visible when the sheet is closed and reopened.",
-        "Minimum category, Maximum category, and Zone can be set independently without UI breakage."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/screens/DiscoverScreen.tsx",
-          "operation": "modify",
-          "description": "Replace the single `filters` state with three independent pieces of state: `minCategory`, `maxCategory`, and `zone` (default zone: “All departments”). Pass these values and dedicated change handlers down to DiscoverFilters so the sheet can be closed/reopened without losing selections, and so each control updates independently. Keep candidate discovery fetching behavior unchanged (no server-side filtering changes in this task)."
-        },
-        {
-          "path": "frontend/src/components/DiscoverFilters.tsx",
-          "operation": "modify",
-          "description": "Update DiscoverFilters props to accept `minCategory`, `maxCategory`, and `zone` plus corresponding onChange callbacks, and bind the three Select controls to those props so the visible selections reflect DiscoverScreen state. Use shadcn-ui Select/Label components. Verify the component's usage instructions before implementing."
+          "description": "Update only the Zone dropdown to use the existing shadcn/ui Select composition (Select + SelectContent) with a constrained max height and vertical overflow scrolling (e.g., max-height based on available viewport space and `overflow-y-auto`) so long option lists are scrollable on mobile and desktop, while leaving the Minimum/Maximum Category selects unchanged. Verify the component's usage instructions before implementing."
         }
       ]
     }
