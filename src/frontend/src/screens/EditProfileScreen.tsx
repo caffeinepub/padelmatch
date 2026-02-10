@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useUpdateProfile } from '../hooks/useQueries';
-import { Profile, Level, Position } from '../backend';
+import { Profile, Category, Position } from '../backend';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,7 +17,7 @@ interface EditProfileScreenProps {
 export default function EditProfileScreen({ profile, onBack }: EditProfileScreenProps) {
   const [name, setName] = useState(profile.name);
   const [age, setAge] = useState(Number(profile.age).toString());
-  const [level, setLevel] = useState<Level>(profile.level);
+  const [category, setCategory] = useState<Category>(profile.category);
   const [position, setPosition] = useState<Position>(profile.position);
   const [zone, setZone] = useState(profile.zone);
   const [availability, setAvailability] = useState(profile.availability.join(', '));
@@ -34,7 +34,7 @@ export default function EditProfileScreen({ profile, onBack }: EditProfileScreen
       {
         name,
         age: BigInt(age),
-        level,
+        category,
         position,
         zone,
         availability: availabilityArray,
@@ -86,17 +86,19 @@ export default function EditProfileScreen({ profile, onBack }: EditProfileScreen
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="level">Nivel (1-5)</Label>
-                <Select value={level} onValueChange={(v) => setLevel(v as Level)}>
+                <Label htmlFor="category">Categoría (1era–7ma)</Label>
+                <Select value={category} onValueChange={(v) => setCategory(v as Category)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={Level.one}>Nivel 1 - Principiante</SelectItem>
-                    <SelectItem value={Level.two}>Nivel 2 - Básico</SelectItem>
-                    <SelectItem value={Level.three}>Nivel 3 - Intermedio</SelectItem>
-                    <SelectItem value={Level.four}>Nivel 4 - Avanzado</SelectItem>
-                    <SelectItem value={Level.five}>Nivel 5 - Experto</SelectItem>
+                    <SelectItem value={Category.first}>1era</SelectItem>
+                    <SelectItem value={Category.second}>2da</SelectItem>
+                    <SelectItem value={Category.third}>3era</SelectItem>
+                    <SelectItem value={Category.fourth}>4ta</SelectItem>
+                    <SelectItem value={Category.fifth}>5ta</SelectItem>
+                    <SelectItem value={Category.sixth}>6ta</SelectItem>
+                    <SelectItem value={Category.seventh}>7ma</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -6,13 +6,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Level, Position } from '../backend';
-import { levelToNumber, positionToSpanish } from '../utils/profileMappings';
+import { Category, Position } from '../backend';
+import { URUGUAY_DEPARTMENTS, ALL_DEPARTMENTS } from '../utils/uruguayDepartments';
 
 export default function ProfileSetupScreen() {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
-  const [level, setLevel] = useState<Level>(Level.three);
+  const [category, setCategory] = useState<Category>(Category.third);
   const [position, setPosition] = useState<Position>(Position.drive);
   const [zone, setZone] = useState('');
   const [availability, setAvailability] = useState('');
@@ -28,7 +28,7 @@ export default function ProfileSetupScreen() {
     createProfile.mutate({
       name,
       age: BigInt(age),
-      level,
+      category,
       position,
       zone,
       availability: availabilityArray,
@@ -78,17 +78,19 @@ export default function ProfileSetupScreen() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="level">Nivel (1-5) *</Label>
-                <Select value={level} onValueChange={(v) => setLevel(v as Level)}>
+                <Label htmlFor="category">Categoría (1era–7ma) *</Label>
+                <Select value={category} onValueChange={(v) => setCategory(v as Category)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={Level.one}>Nivel 1 - Principiante</SelectItem>
-                    <SelectItem value={Level.two}>Nivel 2 - Básico</SelectItem>
-                    <SelectItem value={Level.three}>Nivel 3 - Intermedio</SelectItem>
-                    <SelectItem value={Level.four}>Nivel 4 - Avanzado</SelectItem>
-                    <SelectItem value={Level.five}>Nivel 5 - Experto</SelectItem>
+                    <SelectItem value={Category.first}>1era</SelectItem>
+                    <SelectItem value={Category.second}>2da</SelectItem>
+                    <SelectItem value={Category.third}>3era</SelectItem>
+                    <SelectItem value={Category.fourth}>4ta</SelectItem>
+                    <SelectItem value={Category.fifth}>5ta</SelectItem>
+                    <SelectItem value={Category.sixth}>6ta</SelectItem>
+                    <SelectItem value={Category.seventh}>7ma</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -108,13 +110,19 @@ export default function ProfileSetupScreen() {
 
               <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="zone">Zona *</Label>
-                <Input
-                  id="zone"
-                  value={zone}
-                  onChange={(e) => setZone(e.target.value)}
-                  placeholder="Ej: Madrid Centro, Barcelona Norte"
-                  required
-                />
+                <Select value={zone} onValueChange={setZone}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona tu departamento" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px] overflow-y-auto">
+                    <SelectItem value={ALL_DEPARTMENTS}>{ALL_DEPARTMENTS}</SelectItem>
+                    {URUGUAY_DEPARTMENTS.map((department) => (
+                      <SelectItem key={department} value={department}>
+                        {department}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2 md:col-span-2">

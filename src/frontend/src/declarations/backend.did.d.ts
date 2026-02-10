@@ -10,14 +10,16 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type Category = { 'fifth' : null } |
+  { 'first' : null } |
+  { 'third' : null } |
+  { 'seventh' : null } |
+  { 'second' : null } |
+  { 'sixth' : null } |
+  { 'fourth' : null };
 export type ExternalBlob = Uint8Array;
 export type Filters = { 'zone' : null } |
-  { 'level' : null };
-export type Level = { 'one' : null } |
-  { 'two' : null } |
-  { 'three' : null } |
-  { 'five' : null } |
-  { 'four' : null };
+  { 'category' : null };
 export type Position = { 'drive' : null } |
   { 'reves' : null };
 export interface Profile {
@@ -28,8 +30,8 @@ export interface Profile {
   'wins' : bigint,
   'zone' : Zone,
   'created_at' : Time,
-  'level' : Level,
   'availability' : Array<string>,
+  'category' : Category,
   'matchesPlayed' : bigint,
   'photo' : [] | [ExternalBlob],
   'position' : Position,
@@ -69,7 +71,7 @@ export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createProfile' : ActorMethod<
-    [string, bigint, Level, Position, Zone, Array<string>, string],
+    [string, bigint, Category, Position, Zone, Array<string>, string],
     undefined
   >,
   'discoverCandidates' : ActorMethod<[Filters], Array<Profile>>,
@@ -79,7 +81,7 @@ export interface _SERVICE {
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[Profile], undefined>,
   'updateProfile' : ActorMethod<
-    [string, bigint, Level, Position, Zone, Array<string>, string],
+    [string, bigint, Category, Position, Zone, Array<string>, string],
     undefined
   >,
   'uploadPhoto' : ActorMethod<[ExternalBlob], undefined>,

@@ -12,20 +12,36 @@ import Storage "blob-storage/Storage";
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
 import MixinStorage "blob-storage/Mixin";
+import Migration "migration";
 
-
-
+(with migration = Migration.run)
 actor {
-  public type Level = { #one; #two; #three; #four; #five };
+  public type Category = {
+    #first;
+    #second;
+    #third;
+    #fourth;
+    #fifth;
+    #sixth;
+    #seventh;
+  };
   public type Position = { #drive; #reves };
   public type Zone = Text;
 
-  module Level {
-    public func compare(l1 : Level, l2 : Level) : Order.Order {
-      let toInt = func(l : Level) : Int {
-        switch (l) { case (#one) { 1 }; case (#two) { 2 }; case (#three) { 3 }; case (#four) { 4 }; case (#five) { 5 } };
+  module Category {
+    public func compare(c1 : Category, c2 : Category) : Order.Order {
+      let toInt = func(c : Category) : Int {
+        switch (c) {
+          case (#first) { 1 };
+          case (#second) { 2 };
+          case (#third) { 3 };
+          case (#fourth) { 4 };
+          case (#fifth) { 5 };
+          case (#sixth) { 6 };
+          case (#seventh) { 7 };
+        };
       };
-      Int.compare(toInt(l1), toInt(l2));
+      Int.compare(toInt(c1), toInt(c2));
     };
   };
 
@@ -34,7 +50,7 @@ actor {
     name : Text;
     photo : ?Storage.ExternalBlob;
     age : Nat;
-    level : Level;
+    category : Category;
     position : Position;
     zone : Zone;
     availability : [Text];
@@ -86,7 +102,7 @@ actor {
   public shared ({ caller }) func createProfile(
     name : Text,
     age : Nat,
-    level : Level,
+    category : Category,
     position : Position,
     zone : Zone,
     availability : [Text],
@@ -105,7 +121,7 @@ actor {
       name;
       photo = null;
       age;
-      level;
+      category;
       position;
       zone;
       availability;
@@ -121,7 +137,7 @@ actor {
   public shared ({ caller }) func updateProfile(
     name : Text,
     age : Nat,
-    level : Level,
+    category : Category,
     position : Position,
     zone : Zone,
     availability : [Text],
@@ -138,7 +154,7 @@ actor {
           profile with
           name;
           age;
-          level;
+          category;
           position;
           zone;
           availability;
@@ -164,7 +180,7 @@ actor {
   };
 
   public type Filters = {
-    #level;
+    #category;
     #zone;
   };
 

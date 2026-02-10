@@ -2,7 +2,7 @@ import { Profile } from '../backend';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import UserAvatar from './UserAvatar';
-import LevelStars from './LevelStars';
+import CategoryBadge from './CategoryBadge';
 import { positionToSpanish } from '../utils/profileMappings';
 import { MapPin } from 'lucide-react';
 
@@ -31,7 +31,7 @@ export default function DiscoverCard({ profile }: DiscoverCardProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <LevelStars level={profile.level} />
+            <CategoryBadge category={profile.category} />
           </div>
 
           <div className="flex flex-wrap gap-2">

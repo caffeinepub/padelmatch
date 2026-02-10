@@ -1,10 +1,13 @@
-// Category options for min/max category filters (1st through 7th)
+import { Category } from '../backend';
+
+// Category options for min/max category filters (1era through 7ma)
+// Using backend Category enum values with Spanish labels
 export const CATEGORY_OPTIONS = [
-  { value: '1', label: '1era' },
-  { value: '2', label: '2da' },
-  { value: '3', label: '3era' },
-  { value: '4', label: '4ta' },
-  { value: '5', label: '5ta' },
-  { value: '6', label: '6ta' },
-  { value: '7', label: '7ma' },
+  { value: Category.first, label: '1era' },
+  { value: Category.second, label: '2da' },
+  { value: Category.third, label: '3era' },
+  { value: Category.fourth, label: '4ta' },
+  { value: Category.fifth, label: '5ta' },
+  { value: Category.sixth, label: '6ta' },
+  { value: Category.seventh, label: '7ma' },
 ] as const;

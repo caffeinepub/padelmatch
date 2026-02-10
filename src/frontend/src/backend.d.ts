@@ -24,22 +24,24 @@ export interface Profile {
     wins: bigint;
     zone: Zone;
     created_at: Time;
-    level: Level;
     availability: Array<string>;
+    category: Category;
     matchesPlayed: bigint;
     photo?: ExternalBlob;
     position: Position;
 }
+export enum Category {
+    fifth = "fifth",
+    first = "first",
+    third = "third",
+    seventh = "seventh",
+    second = "second",
+    sixth = "sixth",
+    fourth = "fourth"
+}
 export enum Filters {
     zone = "zone",
-    level = "level"
-}
-export enum Level {
-    one = "one",
-    two = "two",
-    three = "three",
-    five = "five",
-    four = "four"
+    category = "category"
 }
 export enum Position {
     drive = "drive",
@@ -52,13 +54,13 @@ export enum UserRole {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createProfile(name: string, age: bigint, level: Level, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
+    createProfile(name: string, age: bigint, category: Category, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
     discoverCandidates(_filters: Filters): Promise<Array<Profile>>;
     getCallerUserProfile(): Promise<Profile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getUserProfile(user: Principal): Promise<Profile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: Profile): Promise<void>;
-    updateProfile(name: string, age: bigint, level: Level, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
+    updateProfile(name: string, age: bigint, category: Category, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
     uploadPhoto(photo: ExternalBlob): Promise<void>;
 }

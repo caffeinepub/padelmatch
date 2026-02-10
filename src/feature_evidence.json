@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-zone-select-dropdown-in-frontend-src-components-discoverfilters-tsx-so-the-departments-list-is-vertically-scrollable-and-all-19-uruguay-departments-can-be-reached-on-typical-mobile-viewport-sizes",
-      "featureTitle": "Update the Zone select dropdown in `frontend/src/components/DiscoverFilters.tsx` so the departments list is vertically scrollable and all 19 Uruguay departments can be reached on typical mobile viewport sizes.",
+      "featureId": "feature-update-the-profile-completion-profile-setup-form-to-use-a-category-selector-with-values-from-1era-through-7ma-instead-of-the-current-1-5-level-selector",
+      "featureTitle": "Update the profile completion (Profile Setup) form to use a \"Category\" selector with values from \"1era\" through \"7ma\" instead of the current 1–5 level selector.",
       "files": [
-        "frontend/src/components/DiscoverFilters.tsx"
+        "frontend/src/screens/ProfileSetupScreen.tsx",
+        "frontend/src/utils/profileMappings.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,6 +19,76 @@
       ],
       "testIds": [
         "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-edit-profile-form-to-use-the-same-category-1era-7ma-selector-no-stars-no-1-5-level-wording",
+      "featureTitle": "Update the Edit Profile form to use the same \"Category (1era–7ma)\" selector (no stars, no 1–5 level wording).",
+      "files": [
+        "frontend/src/screens/EditProfileScreen.tsx",
+        "frontend/src/utils/profileMappings.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-replace-the-star-based-category-level-display-in-profile-cards-and-profile-screen-so-it-shows-the-selected-category-label-e-g-3era-instead-of-rendering-1-5-stars",
+      "featureTitle": "Replace the star-based category/level display in profile cards and profile screen so it shows the selected category label (e.g., \"3era\") instead of rendering 1–5 stars.",
+      "files": [
+        "frontend/src/components/CategoryBadge.tsx",
+        "frontend/src/components/DiscoverCard.tsx",
+        "frontend/src/components/LevelStars.tsx",
+        "frontend/src/screens/ProfileScreen.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-frontend-type-bindings-usages-so-the-app-compiles-and-the-profile-create-update-flows-work-end-to-end-with-the-new-7-value-category-enum",
+      "featureTitle": "Update frontend type bindings/usages so the app compiles and the profile create/update flows work end-to-end with the new 7-value category enum.",
+      "files": [
+        "frontend/src/components/DiscoverFilters.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/screens/DiscoverScreen.tsx",
+        "frontend/src/screens/EditProfileScreen.tsx",
+        "frontend/src/screens/ProfileSetupScreen.tsx",
+        "frontend/src/utils/discoverFilterMappings.ts",
+        "frontend/src/utils/profileMappings.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
       ],
       "confidence": "high"
     }

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import UserAvatar from '../components/UserAvatar';
-import LevelStars from '../components/LevelStars';
+import CategoryBadge from '../components/CategoryBadge';
 import EditProfileScreen from './EditProfileScreen';
 import ProfilePhotoUploader from '../components/ProfilePhotoUploader';
 import { positionToSpanish } from '../utils/profileMappings';
@@ -54,7 +54,7 @@ export default function ProfileScreen() {
           </div>
 
           <div className="flex items-center gap-2">
-            <LevelStars level={profile.level} />
+            <CategoryBadge category={profile.category} />
           </div>
 
           <div className="flex flex-wrap gap-2">

@@ -1,18 +1,40 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
+  "summary": "Profile completion UI customization: replace 1–5 star level system with a 'Categoría' selector from 1era to 7ma.",
   "architectural_notes": [],
-  "known_issues": [
-    "Only a subset of the 19 departments are currently visible; list is not scrollable"
-  ],
-  "isFixRequest": true,
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-update-the-zone-select-dropdown-in-frontend-src-components-discoverfilters-tsx-so-the-departments-list-is-vertically-scrollable-and-all-19-uruguay-departments-can-be-reached-on-typical-mobile-viewport-sizes",
-      "title": "Update the Zone select dropdown in `frontend/src/components/DiscoverFilters.tsx` so the departments list is vertically scrollable and all 19 Uruguay departments can be reached on typical mobile viewport sizes.",
+      "id": "feature-update-the-profile-completion-profile-setup-form-to-use-a-category-selector-with-values-from-1era-through-7ma-instead-of-the-current-1-5-level-selector",
+      "title": "Update the profile completion (Profile Setup) form to use a \"Category\" selector with values from \"1era\" through \"7ma\" instead of the current 1–5 level selector.",
       "reqIds": [
         "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-edit-profile-form-to-use-the-same-category-1era-7ma-selector-no-stars-no-1-5-level-wording",
+      "title": "Update the Edit Profile form to use the same \"Category (1era–7ma)\" selector (no stars, no 1–5 level wording).",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-star-based-category-level-display-in-profile-cards-and-profile-screen-so-it-shows-the-selected-category-label-e-g-3era-instead-of-rendering-1-5-stars",
+      "title": "Replace the star-based category/level display in profile cards and profile screen so it shows the selected category label (e.g., \"3era\") instead of rendering 1–5 stars.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-type-bindings-usages-so-the-app-compiles-and-the-profile-create-update-flows-work-end-to-end-with-the-new-7-value-category-enum",
+      "title": "Update frontend type bindings/usages so the app compiles and the profile create/update flows work end-to-end with the new 7-value category enum.",
+      "reqIds": [
+        "REQ-5"
       ],
       "version": 1
     }
@@ -20,12 +42,20 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Allow scrolling in the departments list so all 19 departments are visible",
+      "summary": "In the profile completion screen, replace the 1–5 star level system with a 'Categoría' option ranging from 1era to 7ma.",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Update the backend profile model to support seven category values (1era–7ma) instead of five level values, and ensure create/update profile endpoints accept and store the new range.",
+      "reqIds": [
+        "REQ-4"
+      ],
       "status": "pending"
     }
   ],
-  "projectName": "Make the Zone (Uruguay departments) dropdown scrollable so all 19 departments are accessible",
+  "projectName": "Replace 1–5 star level with Category (1era–7ma) in profile setup and profile display",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -1,22 +1,124 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Make Zone (Uruguay departments) dropdown scrollable in Discover filters",
+  "title": "Replace star level with 1era–7ma Category across profile setup, edit, and display",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Make the Zone select dropdown scrollable so all 19 Uruguay departments (plus the 'Todos los departamentos' option) are reachable on typical mobile viewports without affecting the other selects.",
+      "summary": "Replace Profile Setup level (1–5) selector with a Category (1era–7ma) selector and submit the selected category.",
       "acceptanceCriteria": [
-        "Opening the Zone dropdown shows a scrollable list when the options exceed the available vertical space.",
-        "All items in `URUGUAY_DEPARTMENTS` plus the `ALL_DEPARTMENTS` option can be reached via scrolling and selected.",
-        "Scrolling works with mouse wheel/trackpad on desktop and touch scrolling on mobile.",
-        "No layout regressions to the Minimum/Maximum Category selects in the same sheet."
+        "On the Profile Setup screen, the field currently labeled \"Nivel (1-5)\" is replaced with a field labeled \"Category (1era–7ma)\".",
+        "The selector provides exactly these options: 1era, 2da, 3era, 4ta, 5ta, 6ta, 7ma.",
+        "Submitting the Profile Setup form sends the selected value to the backend as part of profile creation."
       ],
       "file_operations": [
         {
+          "path": "frontend/src/screens/ProfileSetupScreen.tsx",
+          "operation": "modify",
+          "description": "Replace the local `level` state and Level-based Select with a `category` state using the backend `Category` enum; update the label text to \"Category (1era–7ma)\" and ensure the Select offers exactly 1era, 2da, 3era, 4ta, 5ta, 6ta, 7ma; update form submission to pass `category` to the create-profile mutation. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/profileMappings.ts",
+          "operation": "modify",
+          "description": "Add/adjust a small mapping utility to convert the backend `Category` enum into the required display labels (1era–7ma), to be reused by the Profile Setup selector. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Replace Edit Profile level (1–5) selector with the same Category (1era–7ma) selector and preselect the saved category.",
+      "acceptanceCriteria": [
+        "On the Edit Profile screen, the field currently labeled \"Nivel (1-5)\" is replaced with a selector labeled \"Category (1era–7ma)\".",
+        "The currently saved value for the user is preselected when opening Edit Profile.",
+        "Saving updates persists the selected category value."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/screens/EditProfileScreen.tsx",
+          "operation": "modify",
+          "description": "Replace `level` state (and the Level-based Select/label) with `category` using the backend `Category` enum; initialize state from `profile.category` so it is preselected; update submit payload to send `category` via the update-profile mutation; ensure no remaining \"Nivel (1-5)\" wording. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/profileMappings.ts",
+          "operation": "modify",
+          "description": "Ensure a single shared Category-to-label mapping is available for both Edit Profile and Profile Setup selects, avoiding duplicated option definitions and preventing mismatches. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Replace star-based level rendering on Discover cards and Profile screen with a readable Category label.",
+      "acceptanceCriteria": [
+        "Discover cards no longer display star icons for category/level; they display a readable category label (e.g., \"Category: 3era\" or a badge containing \"3era\").",
+        "The Profile screen no longer displays star icons for category/level; it displays the same category label representation.",
+        "No UI element mentions \"Nivel (1-5)\" after the change in the profile setup/edit/display flows."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/CategoryBadge.tsx",
+          "operation": "create",
+          "description": "Create a small presentational component that renders the profile `Category` as a readable label (e.g., badge containing \"3era\"), using the Category-to-label mapping utility. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/DiscoverCard.tsx",
+          "operation": "modify",
+          "description": "Remove the `LevelStars` usage and replace it with the new Category label representation (e.g., `CategoryBadge` showing the user's category); ensure the card no longer renders any star icons for level/category. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/screens/ProfileScreen.tsx",
+          "operation": "modify",
+          "description": "Remove the `LevelStars` usage and replace it with the same Category label representation used in Discover cards; ensure the profile view shows the user's saved category via `profile.category` and contains no star icons and no \"Nivel (1-5)\" text. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/LevelStars.tsx",
+          "operation": "delete",
+          "description": "Remove the star-based level component since the UI must no longer render 1–5 stars for level/category."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Update frontend typings and create/update flows to use the 7-value Category enum end-to-end and remove 1–5 assumptions.",
+      "acceptanceCriteria": [
+        "The frontend builds without TypeScript errors related to the previous 1–5 `Level` enum.",
+        "Profile creation and profile update mutations send the new 7-value enum correctly.",
+        "Any mapping utilities (e.g., number/enums) are updated or removed so they no longer assume a 1–5 range."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update create/update profile mutations to use `Category` (not `Level`) in their TypeScript types and in the actor call arguments; rename payload fields from `level` to `category` to match backend method signatures; ensure no imports reference `Level`. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/screens/ProfileSetupScreen.tsx",
+          "operation": "modify",
+          "description": "Update imports and form payload typings/usages to reference `Category` instead of the removed `Level` enum, ensuring compilation against current backend bindings. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/screens/EditProfileScreen.tsx",
+          "operation": "modify",
+          "description": "Update imports and state typing to reference `Category` and `profile.category` rather than `Level`/`profile.level`, ensuring compilation against current backend bindings. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/profileMappings.ts",
+          "operation": "modify",
+          "description": "Remove/replace `levelToNumber` and `numberToLevel` (and any 1–5 assumptions) with Category-to-label utilities aligned to the backend `Category` enum values (first..seventh) and required UI labels (1era..7ma). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/screens/DiscoverScreen.tsx",
+          "operation": "modify",
+          "description": "Update discovery fetching to use the current backend `Filters` enum value for category (replacing the now-invalid level filter reference) so the app compiles; keep existing client-side filter UI behavior unchanged beyond the category model update. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/discoverFilterMappings.ts",
+          "operation": "modify",
+          "description": "Align category option values with the backend `Category` enum (first..seventh) while keeping the displayed labels exactly 1era..7ma, so selects and any future category-related logic use consistent types. Verify the component's usage instructions before implementing."
+        },
+        {
           "path": "frontend/src/components/DiscoverFilters.tsx",
           "operation": "modify",
-          "description": "Update only the Zone dropdown to use the existing shadcn/ui Select composition (Select + SelectContent) with a constrained max height and vertical overflow scrolling (e.g., max-height based on available viewport space and `overflow-y-auto`) so long option lists are scrollable on mobile and desktop, while leaving the Minimum/Maximum Category selects unchanged. Verify the component's usage instructions before implementing."
+          "description": "Update the min/max category filter Selects to use the updated category option values (backend `Category` enum values) while showing the same 1era..7ma labels; avoid introducing new filtering behavior beyond the required type alignment. Verify the component's usage instructions before implementing."
         }
       ]
     }

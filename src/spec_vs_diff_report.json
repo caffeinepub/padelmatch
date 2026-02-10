@@ -1,29 +1,53 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T23:25:58.298Z",
-  "summary": "REQ-1 appears implemented by constraining the Zone dropdown list height and enabling vertical scrolling via Tailwind classes on `SelectContent` in `DiscoverFilters.tsx`. No evidence of backend changes or edits under `frontend/src/components/ui` in the provided diff summary. Two additional non-requested metadata/state files were modified.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-10T14:22:31.099Z",
+  "summary": "Implemented a new 7-value backend `Category` enum (first–seventh) with comparison ordering, updated profile create/update to accept `category`, added a stable-state migration from old 1–5 `level` to `category`, and updated key frontend screens/components to use and display category labels (1era–7ma) via a `CategoryBadge`. However, the diff also introduces new/expanded Discover filter UI/state around min/max category and zone that was explicitly out of scope (no discovery filtering feature changes). Additionally, the new field label text is Spanish (\"Categoría\") rather than the requested exact label \"Category\".",
+  "missing_requirements": [
     {
-      "description": "Modified repository metadata/documentation summary file (`frontend-file-summaries.txt`) unrelated to making the Zone dropdown scrollable.",
-      "reason": "BuildRequest only asks for a UI behavior change in `frontend/src/components/DiscoverFilters.tsx`; updating a file summary document is not requested.",
+      "id": "REQ-1",
+      "requirement": "On the Profile Setup screen, the field currently labeled \"Nivel (1-5)\" is replaced with a field labeled \"Category (1era–7ma)\".",
+      "reason": "The Profile Setup field label shown in the diff is \"Categoría (1era–7ma)\" (Spanish), not the specified label text \"Category (1era–7ma)\".",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend/src/screens/ProfileSetupScreen.tsx"
       ]
     },
     {
-      "description": "Updated `project_state.json` (feature request tracking/status) unrelated to implementing the UI scroll behavior.",
-      "reason": "BuildRequest does not ask to change project tracking/state files; it requests only the UI fix.",
+      "id": "REQ-2",
+      "requirement": "On the Edit Profile screen, the field currently labeled \"Nivel (1-5)\" is replaced with a selector labeled \"Category (1era–7ma)\".",
+      "reason": "The Edit Profile field label shown in the diff is \"Categoría (1era–7ma)\" (Spanish), not the specified label text \"Category (1era–7ma)\".",
       "evidence": [
-        "project_state.json"
+        "frontend/src/screens/EditProfileScreen.tsx"
       ]
     }
   ],
-  "confidence": 0.9,
+  "hallucinated_features": [
+    {
+      "description": "Added/expanded Discover filtering UI and state for minCategory/maxCategory/zone selectors (category range + zone) in the Discover flow.",
+      "reason": "The BuildRequest explicitly states a non-goal to add new discovery filtering features or change existing filter behavior beyond what is required for the category model update. The diff introduces new filter state and a new filters UI component using min/max category and zone selectors.",
+      "evidence": [
+        "frontend/src/components/DiscoverFilters.tsx",
+        "frontend/src/screens/DiscoverScreen.tsx",
+        "frontend/src/utils/discoverFilterMappings.ts"
+      ]
+    }
+  ],
+  "confidence": 0.72,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
+    "frontend/src/components/CategoryBadge.tsx",
+    "frontend/src/components/DiscoverCard.tsx",
     "frontend/src/components/DiscoverFilters.tsx",
+    "frontend/src/components/LevelStars.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/screens/DiscoverScreen.tsx",
+    "frontend/src/screens/EditProfileScreen.tsx",
+    "frontend/src/screens/ProfileScreen.tsx",
+    "frontend/src/screens/ProfileSetupScreen.tsx",
+    "frontend/src/utils/discoverFilterMappings.ts",
+    "frontend/src/utils/profileMappings.ts",
     "project_state.json"
   ]
 }

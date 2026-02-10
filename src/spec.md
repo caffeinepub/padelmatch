@@ -1,10 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Make the Zone (Uruguay departments) dropdown vertically scrollable so all 19 departments (plus the “All” option) are accessible on typical mobile screens.
+**Goal:** Replace the current 1–5 star “Nivel” system with a 7-value “Category” (1era–7ma) across profile setup, edit, display, and storage.
 
 **Planned changes:**
-- Update the Zone select dropdown in `frontend/src/components/DiscoverFilters.tsx` to constrain the options list height and enable vertical scrolling when it exceeds available space.
-- Ensure scroll interaction works via mouse wheel/trackpad on desktop and touch scrolling on mobile without impacting the layout of the Minimum/Maximum Category selects in the same sheet.
+- Update Profile Setup form: replace “Nivel (1-5)” star/level selector with “Category (1era–7ma)” selector containing exactly: 1era, 2da, 3era, 4ta, 5ta, 6ta, 7ma; submit selected value with profile creation.
+- Update Edit Profile form: use the same “Category (1era–7ma)” selector; preselect the saved value; persist updates.
+- Update profile displays (discover cards and profile screen): remove star rendering and show the selected category label (e.g., “3era” / “Category: 3era”); remove any “Nivel (1-5)” wording.
+- Update backend profile model and endpoints: replace the 5-value level with a 7-value category enum (1era–7ma) in create/update and storage; update any ordering/comparison helper to handle all 7 values correctly.
+- Update frontend type bindings/usages: ensure end-to-end create/update flows use the new 7-value enum and remove/adjust any 1–5 assumptions so the app compiles cleanly.
 
-**User-visible outcome:** Users can open the Zone dropdown and scroll through the list to view and select any Uruguay department (and the “All” option) on both mobile and desktop.
+**User-visible outcome:** Users can select a padel “Category” from 1era to 7ma during profile setup and editing, and the app displays that category label (not stars) on profile cards and the profile screen.

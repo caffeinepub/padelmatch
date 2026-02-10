@@ -1,36 +1,23 @@
-import { Level, Position } from '../backend';
+import { Category, Position } from '../backend';
 
-export function levelToNumber(level: Level): number {
-  switch (level) {
-    case Level.one:
-      return 1;
-    case Level.two:
-      return 2;
-    case Level.three:
-      return 3;
-    case Level.four:
-      return 4;
-    case Level.five:
-      return 5;
+export function categoryToLabel(category: Category): string {
+  switch (category) {
+    case Category.first:
+      return '1era';
+    case Category.second:
+      return '2da';
+    case Category.third:
+      return '3era';
+    case Category.fourth:
+      return '4ta';
+    case Category.fifth:
+      return '5ta';
+    case Category.sixth:
+      return '6ta';
+    case Category.seventh:
+      return '7ma';
     default:
-      return 3;
-  }
-}
-
-export function numberToLevel(num: number): Level {
-  switch (num) {
-    case 1:
-      return Level.one;
-    case 2:
-      return Level.two;
-    case 3:
-      return Level.three;
-    case 4:
-      return Level.four;
-    case 5:
-      return Level.five;
-    default:
-      return Level.three;
+      return '3era';
   }
 }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDiscoverCandidates } from '../hooks/useQueries';
-import { Filters } from '../backend';
+import { Filters, Category } from '../backend';
 import DiscoverCard from '../components/DiscoverCard';
 import DiscoverFilters from '../components/DiscoverFilters';
 import { Button } from '@/components/ui/button';
@@ -9,15 +9,15 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { ALL_DEPARTMENTS } from '../utils/uruguayDepartments';
 
 export default function DiscoverScreen() {
-  const [minCategory, setMinCategory] = useState<string>('1');
-  const [maxCategory, setMaxCategory] = useState<string>('7');
+  const [minCategory, setMinCategory] = useState<Category>(Category.first);
+  const [maxCategory, setMaxCategory] = useState<Category>(Category.seventh);
   const [zone, setZone] = useState<string>(ALL_DEPARTMENTS);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [passedUsers, setPassedUsers] = useState<Set<string>>(new Set());
 
   // For now, we still pass the old Filters enum to the backend (no server-side filtering changes)
-  const { data: candidates = [], isLoading } = useDiscoverCandidates(Filters.level);
+  const { data: candidates = [], isLoading } = useDiscoverCandidates(Filters.category);
 
   // Filter out passed users
   const availableCandidates = candidates.filter(

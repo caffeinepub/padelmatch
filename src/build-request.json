@@ -1,35 +1,108 @@
 {
   "kind": "build_request",
-  "title": "Make the Zone (Uruguay departments) dropdown scrollable so all 19 departments are accessible",
+  "title": "Replace 1–5 star level with Category (1era–7ma) in profile setup and profile display",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the Zone select dropdown in `frontend/src/components/DiscoverFilters.tsx` so the departments list is vertically scrollable and all 19 Uruguay departments can be reached on typical mobile viewport sizes.",
+      "text": "Update the profile completion (Profile Setup) form to use a \"Category\" selector with values from \"1era\" through \"7ma\" instead of the current 1–5 level selector.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-1"
+          "msg-1"
         ],
         "quotes": [
-          "npo se llegan a ver los 19 departamentos, necesito que se pueda scrollear para verlos todos"
+          "en el mismo lugar donmde se completa el perfil quiero que en lugar de ser un sistema de estrellas (nivekl 1 a 5) sea Categoria y sea de 1era a 7ma"
         ]
       },
       "acceptanceCriteria": [
-        "Opening the Zone dropdown shows a scrollable list when the options exceed the available vertical space.",
-        "All items in `URUGUAY_DEPARTMENTS` plus the `ALL_DEPARTMENTS` option can be reached via scrolling and selected.",
-        "Scrolling works with mouse wheel/trackpad on desktop and touch scrolling on mobile.",
-        "No layout regressions to the Minimum/Maximum Category selects in the same sheet."
+        "On the Profile Setup screen, the field currently labeled \"Nivel (1-5)\" is replaced with a field labeled \"Category (1era–7ma)\".",
+        "The selector provides exactly these options: 1era, 2da, 3era, 4ta, 5ta, 6ta, 7ma.",
+        "Submitting the Profile Setup form sends the selected value to the backend as part of profile creation."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Update the Edit Profile form to use the same \"Category (1era–7ma)\" selector (no stars, no 1–5 level wording).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "en el mismo lugar donmde se completa el perfil quiero que en lugar de ser un sistema de estrellas (nivekl 1 a 5) sea Categoria y sea de 1era a 7ma"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On the Edit Profile screen, the field currently labeled \"Nivel (1-5)\" is replaced with a selector labeled \"Category (1era–7ma)\".",
+        "The currently saved value for the user is preselected when opening Edit Profile.",
+        "Saving updates persists the selected category value."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Replace the star-based category/level display in profile cards and profile screen so it shows the selected category label (e.g., \"3era\") instead of rendering 1–5 stars.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "en el mismo lugar donmde se completa el perfil quiero que en lugar de ser un sistema de estrellas (nivekl 1 a 5) sea Categoria y sea de 1era a 7ma"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Discover cards no longer display star icons for category/level; they display a readable category label (e.g., \"Category: 3era\" or a badge containing \"3era\").",
+        "The Profile screen no longer displays star icons for category/level; it displays the same category label representation.",
+        "No UI element mentions \"Nivel (1-5)\" after the change in the profile setup/edit/display flows."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Update the backend profile model to support seven category values (1era–7ma) instead of five level values, and ensure create/update profile endpoints accept and store the new range.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "en el mismo lugar donmde se completa el perfil quiero que en lugar de ser un sistema de estrellas (nivekl 1 a 5) sea Categoria y sea de 1era a 7ma"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The backend type used for the profile’s level/category supports 7 distinct values (1era through 7ma) rather than 5.",
+        "Backend methods `createProfile` and `updateProfile` accept the new 7-value enum and store it on the Profile record.",
+        "Any backend comparison/sorting helper for the level/category enum is updated to correctly order all 7 values."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Update frontend type bindings/usages so the app compiles and the profile create/update flows work end-to-end with the new 7-value category enum.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "en el mismo lugar donmde se completa el perfil quiero que en lugar de ser un sistema de estrellas (nivekl 1 a 5) sea Categoria y sea de 1era a 7ma"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The frontend builds without TypeScript errors related to the previous 1–5 `Level` enum.",
+        "Profile creation and profile update mutations send the new 7-value enum correctly.",
+        "Any mapping utilities (e.g., number/enums) are updated or removed so they no longer assume a 1–5 range."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under `frontend/src/components/ui` (read-only UI components must be composed, not edited).",
-    "Keep the backend unchanged; this is a UI-only fix."
+    "Do not edit any files under frontend/src/components/ui (compose them only).",
+    "Do not modify files listed in frontend.immutablePaths (use alternatives/wrappers if needed).",
+    "Keep all backend logic within the single actor in backend/main.mo; only add backend/migration.mo if a stable-state upgrade actually requires it."
   ],
   "nonGoals": [
-    "Adding new departments or changing the department names/order in `frontend/src/utils/uruguayDepartments.ts`.",
-    "Implementing server-side filtering logic based on the selected Zone."
+    "Do not add new discovery filtering features or change existing filter behavior beyond what is required for the category model update.",
+    "Do not change the Zone/Uruguay departments behavior as part of this request.",
+    "Do not add new authentication methods (Internet Identity remains the only auth)."
   ],
   "imageRequirements": {
     "required": [],

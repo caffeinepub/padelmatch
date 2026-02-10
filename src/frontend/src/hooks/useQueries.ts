@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { Profile, Level, Position, Zone } from '../backend';
+import type { Profile, Category, Position, Zone } from '../backend';
 import { ExternalBlob, Filters } from '../backend';
 import { toast } from 'sonner';
 
@@ -33,7 +33,7 @@ export function useCreateProfile() {
     mutationFn: async (data: {
       name: string;
       age: bigint;
-      level: Level;
+      category: Category;
       position: Position;
       zone: Zone;
       availability: string[];
@@ -43,7 +43,7 @@ export function useCreateProfile() {
       await actor.createProfile(
         data.name,
         data.age,
-        data.level,
+        data.category,
         data.position,
         data.zone,
         data.availability,
@@ -68,7 +68,7 @@ export function useUpdateProfile() {
     mutationFn: async (data: {
       name: string;
       age: bigint;
-      level: Level;
+      category: Category;
       position: Position;
       zone: Zone;
       availability: string[];
@@ -78,7 +78,7 @@ export function useUpdateProfile() {
       await actor.updateProfile(
         data.name,
         data.age,
-        data.level,
+        data.category,
         data.position,
         data.zone,
         data.availability,

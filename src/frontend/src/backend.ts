@@ -106,8 +106,8 @@ export interface Profile {
     wins: bigint;
     zone: Zone;
     created_at: Time;
-    level: Level;
     availability: Array<string>;
+    category: Category;
     matchesPlayed: bigint;
     photo?: ExternalBlob;
     position: Position;
@@ -116,16 +116,18 @@ export interface _CaffeineStorageRefillResult {
     success?: boolean;
     topped_up_amount?: bigint;
 }
+export enum Category {
+    fifth = "fifth",
+    first = "first",
+    third = "third",
+    seventh = "seventh",
+    second = "second",
+    sixth = "sixth",
+    fourth = "fourth"
+}
 export enum Filters {
     zone = "zone",
-    level = "level"
-}
-export enum Level {
-    one = "one",
-    two = "two",
-    three = "three",
-    five = "five",
-    four = "four"
+    category = "category"
 }
 export enum Position {
     drive = "drive",
@@ -145,17 +147,17 @@ export interface backendInterface {
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createProfile(name: string, age: bigint, level: Level, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
+    createProfile(name: string, age: bigint, category: Category, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
     discoverCandidates(_filters: Filters): Promise<Array<Profile>>;
     getCallerUserProfile(): Promise<Profile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getUserProfile(user: Principal): Promise<Profile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: Profile): Promise<void>;
-    updateProfile(name: string, age: bigint, level: Level, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
+    updateProfile(name: string, age: bigint, category: Category, position: Position, zone: Zone, availability: Array<string>, bio: string): Promise<void>;
     uploadPhoto(photo: ExternalBlob): Promise<void>;
 }
-import type { ExternalBlob as _ExternalBlob, Filters as _Filters, Level as _Level, Position as _Position, Profile as _Profile, Time as _Time, UserRole as _UserRole, Zone as _Zone, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { Category as _Category, ExternalBlob as _ExternalBlob, Filters as _Filters, Position as _Position, Profile as _Profile, Time as _Time, UserRole as _UserRole, Zone as _Zone, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _caffeineStorageBlobIsLive(arg0: Uint8Array): Promise<boolean> {
@@ -270,17 +272,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createProfile(arg0: string, arg1: bigint, arg2: Level, arg3: Position, arg4: Zone, arg5: Array<string>, arg6: string): Promise<void> {
+    async createProfile(arg0: string, arg1: bigint, arg2: Category, arg3: Position, arg4: Zone, arg5: Array<string>, arg6: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.createProfile(arg0, arg1, to_candid_Level_n10(this._uploadFile, this._downloadFile, arg2), to_candid_Position_n12(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6);
+                const result = await this.actor.createProfile(arg0, arg1, to_candid_Category_n10(this._uploadFile, this._downloadFile, arg2), to_candid_Position_n12(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.createProfile(arg0, arg1, to_candid_Level_n10(this._uploadFile, this._downloadFile, arg2), to_candid_Position_n12(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6);
+            const result = await this.actor.createProfile(arg0, arg1, to_candid_Category_n10(this._uploadFile, this._downloadFile, arg2), to_candid_Position_n12(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6);
             return result;
         }
     }
@@ -368,17 +370,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updateProfile(arg0: string, arg1: bigint, arg2: Level, arg3: Position, arg4: Zone, arg5: Array<string>, arg6: string): Promise<void> {
+    async updateProfile(arg0: string, arg1: bigint, arg2: Category, arg3: Position, arg4: Zone, arg5: Array<string>, arg6: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateProfile(arg0, arg1, to_candid_Level_n10(this._uploadFile, this._downloadFile, arg2), to_candid_Position_n12(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6);
+                const result = await this.actor.updateProfile(arg0, arg1, to_candid_Category_n10(this._uploadFile, this._downloadFile, arg2), to_candid_Position_n12(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateProfile(arg0, arg1, to_candid_Level_n10(this._uploadFile, this._downloadFile, arg2), to_candid_Position_n12(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6);
+            const result = await this.actor.updateProfile(arg0, arg1, to_candid_Category_n10(this._uploadFile, this._downloadFile, arg2), to_candid_Position_n12(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6);
             return result;
         }
     }
@@ -397,11 +399,11 @@ export class Backend implements backendInterface {
         }
     }
 }
+function from_candid_Category_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Category): Category {
+    return from_candid_variant_n20(_uploadFile, _downloadFile, value);
+}
 async function from_candid_ExternalBlob_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ExternalBlob): Promise<ExternalBlob> {
     return await _downloadFile(value);
-}
-function from_candid_Level_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Level): Level {
-    return from_candid_variant_n20(_uploadFile, _downloadFile, value);
 }
 function from_candid_Position_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Position): Position {
     return from_candid_variant_n24(_uploadFile, _downloadFile, value);
@@ -435,8 +437,8 @@ async function from_candid_record_n18(_uploadFile: (file: ExternalBlob) => Promi
     wins: bigint;
     zone: _Zone;
     created_at: _Time;
-    level: _Level;
     availability: Array<string>;
+    category: _Category;
     matchesPlayed: bigint;
     photo: [] | [_ExternalBlob];
     position: _Position;
@@ -448,8 +450,8 @@ async function from_candid_record_n18(_uploadFile: (file: ExternalBlob) => Promi
     wins: bigint;
     zone: Zone;
     created_at: Time;
-    level: Level;
     availability: Array<string>;
+    category: Category;
     matchesPlayed: bigint;
     photo?: ExternalBlob;
     position: Position;
@@ -462,8 +464,8 @@ async function from_candid_record_n18(_uploadFile: (file: ExternalBlob) => Promi
         wins: value.wins,
         zone: value.zone,
         created_at: value.created_at,
-        level: from_candid_Level_n19(_uploadFile, _downloadFile, value.level),
         availability: value.availability,
+        category: from_candid_Category_n19(_uploadFile, _downloadFile, value.category),
         matchesPlayed: value.matchesPlayed,
         photo: record_opt_to_undefined(await from_candid_opt_n21(_uploadFile, _downloadFile, value.photo)),
         position: from_candid_Position_n23(_uploadFile, _downloadFile, value.position)
@@ -482,17 +484,21 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
     };
 }
 function from_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    one: null;
+    fifth: null;
 } | {
-    two: null;
+    first: null;
 } | {
-    three: null;
+    third: null;
 } | {
-    five: null;
+    seventh: null;
 } | {
-    four: null;
-}): Level {
-    return "one" in value ? Level.one : "two" in value ? Level.two : "three" in value ? Level.three : "five" in value ? Level.five : "four" in value ? Level.four : value;
+    second: null;
+} | {
+    sixth: null;
+} | {
+    fourth: null;
+}): Category {
+    return "fifth" in value ? Category.fifth : "first" in value ? Category.first : "third" in value ? Category.third : "seventh" in value ? Category.seventh : "second" in value ? Category.second : "sixth" in value ? Category.sixth : "fourth" in value ? Category.fourth : value;
 }
 function from_candid_variant_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     drive: null;
@@ -513,14 +519,14 @@ function from_candid_variant_n27(_uploadFile: (file: ExternalBlob) => Promise<Ui
 async function from_candid_vec_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Profile>): Promise<Array<Profile>> {
     return await Promise.all(value.map(async (x)=>await from_candid_Profile_n17(_uploadFile, _downloadFile, x)));
 }
+function to_candid_Category_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Category): _Category {
+    return to_candid_variant_n11(_uploadFile, _downloadFile, value);
+}
 async function to_candid_ExternalBlob_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob): Promise<_ExternalBlob> {
     return await _uploadFile(value);
 }
 function to_candid_Filters_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Filters): _Filters {
     return to_candid_variant_n15(_uploadFile, _downloadFile, value);
-}
-function to_candid_Level_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Level): _Level {
-    return to_candid_variant_n11(_uploadFile, _downloadFile, value);
 }
 function to_candid_Position_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Position): _Position {
     return to_candid_variant_n13(_uploadFile, _downloadFile, value);
@@ -545,8 +551,8 @@ async function to_candid_record_n29(_uploadFile: (file: ExternalBlob) => Promise
     wins: bigint;
     zone: Zone;
     created_at: Time;
-    level: Level;
     availability: Array<string>;
+    category: Category;
     matchesPlayed: bigint;
     photo?: ExternalBlob;
     position: Position;
@@ -558,8 +564,8 @@ async function to_candid_record_n29(_uploadFile: (file: ExternalBlob) => Promise
     wins: bigint;
     zone: _Zone;
     created_at: _Time;
-    level: _Level;
     availability: Array<string>;
+    category: _Category;
     matchesPlayed: bigint;
     photo: [] | [_ExternalBlob];
     position: _Position;
@@ -572,8 +578,8 @@ async function to_candid_record_n29(_uploadFile: (file: ExternalBlob) => Promise
         wins: value.wins,
         zone: value.zone,
         created_at: value.created_at,
-        level: to_candid_Level_n10(_uploadFile, _downloadFile, value.level),
         availability: value.availability,
+        category: to_candid_Category_n10(_uploadFile, _downloadFile, value.category),
         matchesPlayed: value.matchesPlayed,
         photo: value.photo ? candid_some(await to_candid_ExternalBlob_n30(_uploadFile, _downloadFile, value.photo)) : candid_none(),
         position: to_candid_Position_n12(_uploadFile, _downloadFile, value.position)
@@ -588,27 +594,35 @@ function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
         proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
     };
 }
-function to_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Level): {
-    one: null;
+function to_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Category): {
+    fifth: null;
 } | {
-    two: null;
+    first: null;
 } | {
-    three: null;
+    third: null;
 } | {
-    five: null;
+    seventh: null;
 } | {
-    four: null;
+    second: null;
+} | {
+    sixth: null;
+} | {
+    fourth: null;
 } {
-    return value == Level.one ? {
-        one: null
-    } : value == Level.two ? {
-        two: null
-    } : value == Level.three ? {
-        three: null
-    } : value == Level.five ? {
-        five: null
-    } : value == Level.four ? {
-        four: null
+    return value == Category.fifth ? {
+        fifth: null
+    } : value == Category.first ? {
+        first: null
+    } : value == Category.third ? {
+        third: null
+    } : value == Category.seventh ? {
+        seventh: null
+    } : value == Category.second ? {
+        second: null
+    } : value == Category.sixth ? {
+        sixth: null
+    } : value == Category.fourth ? {
+        fourth: null
     } : value;
 }
 function to_candid_variant_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Position): {
@@ -625,12 +639,12 @@ function to_candid_variant_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint
 function to_candid_variant_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Filters): {
     zone: null;
 } | {
-    level: null;
+    category: null;
 } {
     return value == Filters.zone ? {
         zone: null
-    } : value == Filters.level ? {
-        level: null
+    } : value == Filters.category ? {
+        category: null
     } : value;
 }
 function to_candid_variant_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {

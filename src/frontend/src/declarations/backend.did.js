@@ -24,16 +24,21 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const Level = IDL.Variant({
-  'one' : IDL.Null,
-  'two' : IDL.Null,
-  'three' : IDL.Null,
-  'five' : IDL.Null,
-  'four' : IDL.Null,
+export const Category = IDL.Variant({
+  'fifth' : IDL.Null,
+  'first' : IDL.Null,
+  'third' : IDL.Null,
+  'seventh' : IDL.Null,
+  'second' : IDL.Null,
+  'sixth' : IDL.Null,
+  'fourth' : IDL.Null,
 });
 export const Position = IDL.Variant({ 'drive' : IDL.Null, 'reves' : IDL.Null });
 export const Zone = IDL.Text;
-export const Filters = IDL.Variant({ 'zone' : IDL.Null, 'level' : IDL.Null });
+export const Filters = IDL.Variant({
+  'zone' : IDL.Null,
+  'category' : IDL.Null,
+});
 export const Time = IDL.Int;
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const Profile = IDL.Record({
@@ -44,8 +49,8 @@ export const Profile = IDL.Record({
   'wins' : IDL.Nat,
   'zone' : Zone,
   'created_at' : Time,
-  'level' : Level,
   'availability' : IDL.Vec(IDL.Text),
+  'category' : Category,
   'matchesPlayed' : IDL.Nat,
   'photo' : IDL.Opt(ExternalBlob),
   'position' : Position,
@@ -81,7 +86,15 @@ export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createProfile' : IDL.Func(
-      [IDL.Text, IDL.Nat, Level, Position, Zone, IDL.Vec(IDL.Text), IDL.Text],
+      [
+        IDL.Text,
+        IDL.Nat,
+        Category,
+        Position,
+        Zone,
+        IDL.Vec(IDL.Text),
+        IDL.Text,
+      ],
       [],
       [],
     ),
@@ -92,7 +105,15 @@ export const idlService = IDL.Service({
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([Profile], [], []),
   'updateProfile' : IDL.Func(
-      [IDL.Text, IDL.Nat, Level, Position, Zone, IDL.Vec(IDL.Text), IDL.Text],
+      [
+        IDL.Text,
+        IDL.Nat,
+        Category,
+        Position,
+        Zone,
+        IDL.Vec(IDL.Text),
+        IDL.Text,
+      ],
       [],
       [],
     ),
@@ -118,16 +139,18 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const Level = IDL.Variant({
-    'one' : IDL.Null,
-    'two' : IDL.Null,
-    'three' : IDL.Null,
-    'five' : IDL.Null,
-    'four' : IDL.Null,
+  const Category = IDL.Variant({
+    'fifth' : IDL.Null,
+    'first' : IDL.Null,
+    'third' : IDL.Null,
+    'seventh' : IDL.Null,
+    'second' : IDL.Null,
+    'sixth' : IDL.Null,
+    'fourth' : IDL.Null,
   });
   const Position = IDL.Variant({ 'drive' : IDL.Null, 'reves' : IDL.Null });
   const Zone = IDL.Text;
-  const Filters = IDL.Variant({ 'zone' : IDL.Null, 'level' : IDL.Null });
+  const Filters = IDL.Variant({ 'zone' : IDL.Null, 'category' : IDL.Null });
   const Time = IDL.Int;
   const ExternalBlob = IDL.Vec(IDL.Nat8);
   const Profile = IDL.Record({
@@ -138,8 +161,8 @@ export const idlFactory = ({ IDL }) => {
     'wins' : IDL.Nat,
     'zone' : Zone,
     'created_at' : Time,
-    'level' : Level,
     'availability' : IDL.Vec(IDL.Text),
+    'category' : Category,
     'matchesPlayed' : IDL.Nat,
     'photo' : IDL.Opt(ExternalBlob),
     'position' : Position,
@@ -175,7 +198,15 @@ export const idlFactory = ({ IDL }) => {
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createProfile' : IDL.Func(
-        [IDL.Text, IDL.Nat, Level, Position, Zone, IDL.Vec(IDL.Text), IDL.Text],
+        [
+          IDL.Text,
+          IDL.Nat,
+          Category,
+          Position,
+          Zone,
+          IDL.Vec(IDL.Text),
+          IDL.Text,
+        ],
         [],
         [],
       ),
@@ -186,7 +217,15 @@ export const idlFactory = ({ IDL }) => {
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([Profile], [], []),
     'updateProfile' : IDL.Func(
-        [IDL.Text, IDL.Nat, Level, Position, Zone, IDL.Vec(IDL.Text), IDL.Text],
+        [
+          IDL.Text,
+          IDL.Nat,
+          Category,
+          Position,
+          Zone,
+          IDL.Vec(IDL.Text),
+          IDL.Text,
+        ],
         [],
         [],
       ),
